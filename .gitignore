@@ -1,0 +1,14 @@
+node_modules/
+npm-debug.log
+.DS_Store
+.idea/*
+doc/*
+logs/*
+!logs/README
+public/dist/*
+view/dist/*
+*dist/*
+!.gitkeep
+v8-compile-cache-0/*
+public/dist/*
+yarn-error.log
