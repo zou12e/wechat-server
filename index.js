@@ -10,7 +10,7 @@ const path = require('path');
 const config = require('config');
 const morgan = require('./middleware/morgan');
 const logger = require('./middleware/logger');
-const session = require('./middleware/session');
+// const session = require('./middleware/session');
 const i18n = require('./middleware/i18n');
 const env = config.get('env');
 const port = config.get('port');
@@ -43,7 +43,7 @@ if (env === 'dev') {
     app.use('/jyds', express.static(path.join(__dirname, 'doc')));
 }
 // 使用session
-app.use(session);
+// app.use(session);
 
 // 统一接口返回格式
 app.use(i18n);

@@ -1,0 +1,13 @@
+{
+    "env" : "beta",
+    "port" : 4001,
+    "host": "https://www.zourunze.com",
+    "Session": {
+        "name": "wechat-server-beta",
+        "secret": "wechat"
+    },
+    "wechat": {
+        "appid": "wx037232cadf17facf",
+        "secret": "085507699a2ddaaac855d2e5d27f9e5e"
+    }
+}
