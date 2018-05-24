@@ -23,9 +23,6 @@ const Service = {
             avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/ibDCFl5GOYXxGpq6BZRic6appic2BEkvUpKrItjDCxDJAuz2G7yzf1W1dXRia2ucLBdTZ6I2pVtxbhzANWOnqSuqpA/132'
         };
         res.success(ret);
-    },
-    async test (req, res, next) {
-        res.success('test');
     }
 };
 module.exports = Service;
