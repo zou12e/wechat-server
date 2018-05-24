@@ -10,4 +10,7 @@ router.get('/getReadSpeak', auth.checkSession, server.getReadSpeak);
 // 换一换
 router.get('/changeInfo', auth.checkSession, server.changeInfo);
 
+// 天气
+router.get('/getWeather', auth.checkSession);
+
 module.exports = router;
