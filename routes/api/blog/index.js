@@ -7,6 +7,9 @@ const auth = require('../auth');
 // 获取列表
 router.get('/list', auth.checkSession, server.list);
 
+// 获取列表
+router.get('/getBlogById', auth.checkSession, server.getBlogById);
+
 // 点赞or取消点赞
 router.post('/thumb', auth.checkSession, server.thumb);
 

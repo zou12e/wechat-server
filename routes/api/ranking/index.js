@@ -8,7 +8,7 @@ const auth = require('../auth');
 router.get('/punch', auth.checkSession, server.punch);
 
 // 点赞or取消点赞
-router.post('/thumb', auth.checkSession, server.thumb);
+router.get('/thumb', auth.checkSession, server.thumb);
 
 // 收藏or取消收藏
 
