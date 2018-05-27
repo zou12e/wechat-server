@@ -60,7 +60,7 @@ const Service = {
         const id = req.query.id;
         const data = {
             id: id,
-            userId: 2,
+            userId: id,
             nickName: 'Cathy',
             avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/ibDCFl5GOYXxGpq6BZRic6appic2BEkvUpKrItjDCxDJAuz2G7yzf1W1dXRia2ucLBdTZ6I2pVtxbhzANWOnqSuqpA/132',
             isFollow: true,

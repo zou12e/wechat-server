@@ -18,6 +18,7 @@ const Service = {
         const ret = {
             openid: 'oV-k24_KQDYj4_dl0-y_kuf2LCkI',
             session_key: '58NvXfnM0v+dR1eJmzvY0w==',
+            id: 1,
             nickName: 'Jeff',
             gender: 1,
             avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/ibDCFl5GOYXxGpq6BZRic6appic2BEkvUpKrItjDCxDJAuz2G7yzf1W1dXRia2ucLBdTZ6I2pVtxbhzANWOnqSuqpA/132'
