@@ -10,4 +10,7 @@ router.get('/getCommentByBlogId', auth.checkSession, server.getCommentByBlogId);
 // 获取评论详情
 router.get('/getCommentById', auth.checkSession, server.getCommentById);
 
+// 评论
+router.post('/add', auth.checkSession, server.add);
+
 module.exports = router;

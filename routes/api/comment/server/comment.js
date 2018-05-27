@@ -85,6 +85,10 @@ const Service = {
             }
         };
         res.success(data);
+    },
+    async add (req, res, next) {
+        const data = req.body;
+        res.success(data);
     }
 };
 module.exports = Service;
