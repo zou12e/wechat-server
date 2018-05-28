@@ -1,4 +1,6 @@
 const moment = require('moment');
+const config = require('config');
+const host = config.get('host');
 const Service = {
     async list (req, res, next) {
         const type = ~~req.query.type;
@@ -144,6 +146,14 @@ const Service = {
             createTime: moment().format('YYYY-MM-DD HH:mm')
         };
         res.success(data);
+    },
+    async uploadFile (req, res, next) {
+        const data = {};
+        if (req.file) {
+            data.path = `${host}/static/wechat/audio2/${req.file.filename}`;
+            return res.success(data);
+        }
+        res.error(data);
     }
 };
 module.exports = Service;
