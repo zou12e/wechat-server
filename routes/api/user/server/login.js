@@ -1,29 +1,33 @@
 const rs = require('../../http');
 const config = require('config');
+const _ = require('lodash');
+const db = require('../db');
 const wechat = config.wechat;
 const Service = {
 
     async login (req, res, next) {
-        // const uri = 'https://api.weixin.qq.com/sns/jscode2session';
-        // const data = {
-        //     appid: wechat.appid,
-        //     secret: wechat.secret,
-        //     grant_type: 'authorization_code',
-        //     js_code: req.body.code
-        // };
-        // const ret = await rs.get(uri, data);
-        // if (ret && ret.errcode) {
-        //     return res.error(ret);
-        // }
-        const ret = {
-            openid: 'oV-k24_KQDYj4_dl0-y_kuf2LCkI',
-            session_key: '58NvXfnM0v+dR1eJmzvY0w==',
-            id: 1,
-            nickName: 'Jeff',
-            gender: 1,
-            avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/ibDCFl5GOYXxGpq6BZRic6appic2BEkvUpKrItjDCxDJAuz2G7yzf1W1dXRia2ucLBdTZ6I2pVtxbhzANWOnqSuqpA/132'
+        const uri = 'https://api.weixin.qq.com/sns/jscode2session';
+        const data = {
+            appid: wechat.appid,
+            secret: wechat.secret,
+            grant_type: 'authorization_code',
+            js_code: req.body.code
         };
-        res.success(ret);
+        const ret = await rs.get(uri, data);
+        if (ret && ret.errcode) {
+            return res.error(ret);
+        }
+        if (ret && ret.openid && ret.session_key) {
+            const result = await db.getUserInfo(ret.openid);
+            if (result) {
+                return res.success(_.assign(ret, result));
+            }
+            const id = await db.addUserInfo(ret.openid);
+            if (id) {
+                return res.success(_.assign(ret, {id}));
+            }
+            res.error('add user fail');
+        }
     }
 };
 module.exports = Service;

@@ -9,5 +9,13 @@
     "wechat": {
         "appid": "wx037232cadf17facf",
         "secret": "085507699a2ddaaac855d2e5d27f9e5e"
-    }
+    },
+    "mysql": {
+        "host": "127.0.0.1",
+        "port": 3306,
+        "database": "huiyanbang",
+        "user": "hybroot",
+        "password": "123456"
+    },
+    "beginDate" : "2018-06-01 00:00:00"
 }

@@ -42,4 +42,7 @@ router.post('/collection', auth.checkSession, server.collection);
 // 上传文件
 router.post('/uploadFile', auth.checkSession, upload.single('file'), server.uploadFile);
 
+// 保存blog
+router.post('/save', auth.checkSession, server.save);
+
 module.exports = router;

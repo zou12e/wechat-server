@@ -1,4 +1,5 @@
 
+const db = require('../db');
 const Service = {
     async follow (req, res, next) {
         const userId = req.body.id;
@@ -6,7 +7,14 @@ const Service = {
     },
     async update (req, res, next) {
         const user = req.body.user;
-        res.success(user);
+        if (!user.id) {
+            return res.error('no user');
+        }
+        const ret = await db.updateUserInfo(user);
+        if (ret) {
+            return res.success();
+        }
+        res.error('update user fail');
     },
     async getFollow (req, res, next) {
         const type = ~~req.query.type;
@@ -33,13 +41,7 @@ const Service = {
         res.success(data);
     },
     async getUserById (req, res, next) {
-        const userId = req.body.id;
-        const data = {
-            id: userId,
-            isFollow: true,
-            nickName: 'Cathy',
-            avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/ibDCFl5GOYXxGpq6BZRic6appic2BEkvUpKrItjDCxDJAuz2G7yzf1W1dXRia2ucLBdTZ6I2pVtxbhzANWOnqSuqpA/132'
-        };
+        const data = await db.getUserInfoById(~~req.query.id);
         res.success(data);
     },
     async getInfo (req, res, next) {
