@@ -13,7 +13,7 @@ flush privileges;
 CREATE TABLE `huiyanbang`.`user` (
   `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `openid` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT 'openid',
-  `nickName` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT '昵称',
+  `nickName` VARCHAR(45) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NULL COMMENT '昵称',
   `avatarUrl` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT '头像',
   `gender` TINYINT NULL DEFAULT 0 COMMENT '1男 2女 0未知',
   `city` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT '城市',
@@ -24,6 +24,9 @@ CREATE TABLE `huiyanbang`.`user` (
   `updateTime` DATETIME NULL COMMENT '最后修改时间',
   `status` TINYINT NULL DEFAULT 1 COMMENT '1正常 2禁用',
   PRIMARY KEY (`id`));
+
+
+
 
 -- 音频表 慧言帮
 CREATE TABLE `huiyanbang`.`audio` (

@@ -7,7 +7,8 @@ const pool = mysql.createPool({
     port: config.port,
     database: config.database,
     user: config.user,
-    password: config.password
+    password: config.password,
+    charset: 'utf8mb4_general_ci'
 });
 
 exports.dataCenter = async sql => {
