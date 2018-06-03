@@ -17,6 +17,10 @@ const Service = {
         if (ret && ret.errcode) {
             return res.error(ret);
         }
+        // const ret = {
+        //     openid: 'oV-k24_KQDYj4_dl0-y_kuf2LCkI',
+        //     session_key: 1
+        // };
         if (ret && ret.openid && ret.session_key) {
             const result = await db.getUserInfo(ret.openid);
             if (result) {
