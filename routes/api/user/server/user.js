@@ -2,8 +2,13 @@
 const db = require('../db');
 const Service = {
     async follow (req, res, next) {
-        const userId = req.body.id;
-        res.success(userId);
+        const userId = req.id;
+        const toUserId = req.body.id;
+        const result = await db.follow(userId, toUserId);
+        if (result) {
+            return res.success();
+        }
+        res.error('follow user fail');
     },
     async update (req, res, next) {
         const user = req.body.user;
@@ -18,26 +23,11 @@ const Service = {
     },
     async getFollow (req, res, next) {
         const type = ~~req.query.type;
+        const userId = req.id;
         const data = {
             type: type,
-            list: [
-                {
-                    id: 1,
-                    userId: 1,
-                    nickName: 'Cathy',
-                    avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/ibDCFl5GOYXxGpq6BZRic6appic2BEkvUpKrItjDCxDJAuz2G7yzf1W1dXRia2ucLBdTZ6I2pVtxbhzANWOnqSuqpA/132'
-                },
-                {
-                    id: 2,
-                    userId: 2,
-                    nickName: 'boker',
-                    avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/ibDCFl5GOYXxGpq6BZRic6appic2BEkvUpKrItjDCxDJAuz2G7yzf1W1dXRia2ucLBdTZ6I2pVtxbhzANWOnqSuqpA/132'
-                }
-            ]
+            list: await db.getFollow(type, userId)
         };
-        if (type === 1) {
-            return res.success({list: []});
-        }
         res.success(data);
     },
     async getUserById (req, res, next) {

@@ -20,22 +20,18 @@ const Helper = {
      * 他人微博
      * 早读微博
      * 晚讲微博
-     * @param {*} condition
-     * @param {*} value
-     * @param {*} lastId
-     * @param {*} size
      */
-    async getBlogList (condition, value, lastId, size = 20) {
+    async getBlogList (condition, value, userId, lastId, size = 20) {
         let sql = `select 
         b.id,b.userId,nickName,avatarUrl,
-        0 as isFollow,
+        (select count(1) from follow where userId =  ?) as isFollow,
         title,author,audioAuthor,content,
         b.url,b.time,
-        0 as comments,
-        0 as thumbs,
-        0 as isRecommend,
-        0 as isCollection,
-        0 as isThumb,
+        (select count(1) from comment where blogId =  b.id)  as comments,
+        (select count(1) from thumb where blogId =  b.id)  as thumbs,
+        b.isRecommend,
+        (select count(1) from collection where userId = ? and blogId = b.id) as isCollection,
+        (select count(1) from thumb where userId = ? and blogId = b.id) as isThumb,
         b.createTime as createOriginalTime,
         date_format(b.createTime, '%Y-%m-%d %H:%i:%s' ) as createTime
         from blog as b 
@@ -44,23 +40,49 @@ const Helper = {
         where b.status = 1 
         and ?? = ? 
         and ${lastId ? 'b.id < ' + mysql.format(lastId) : 'b.id > 0'} 
-        order by b.id desc
+        order by b.isRecommend desc, b.id desc
         limit 0 ,?`;
-        sql = mysql.format(sql, ['b.' + condition, value, size]);
+        sql = mysql.format(sql, [userId, userId, userId, 'b.' + condition, value, size]);
         const result = await mydb.dataCenter(sql).catch(e => []);
         return result;
     },
-    async getBlogById (id) {
+    /**
+     * 查看收藏微博
+     */
+    async getCollectionBlogList (userId, lastId, size = 20) {
         let sql = `select 
         b.id,b.userId,nickName,avatarUrl,
-        0 as isFollow,
+        (select count(1) from follow where userId =  ?) as isFollow,
         title,author,audioAuthor,content,
         b.url,b.time,
-        0 as comments,
-        0 as thumbs,
-        0 as isRecommend,
-        0 as isCollection,
-        0 as isThumb,
+        (select count(1) from comment where blogId =  b.id)  as comments,
+        (select count(1) from thumb where blogId =  b.id)  as thumbs,
+        b.isRecommend,
+        (select count(1) from thumb where userId = ? and blogId = b.id) as isThumb,
+        b.createTime as createOriginalTime,
+        date_format(b.createTime, '%Y-%m-%d %H:%i:%s' ) as createTime
+        from collection as c
+        left join blog as b on c.blogId = b.id 
+        left join audio as a on b.audioId = a.id
+        left join user as u on b.userId = u.id
+        and c.userId = ?
+        and ${lastId ? 'c.id < ' + mysql.format(lastId) : 'c.id > 0'} 
+        order  by c.id desc
+        limit 0 ,?`;
+        sql = mysql.format(sql, [userId, userId, userId, size]);
+        const result = await mydb.dataCenter(sql).catch(e => []);
+        return result;
+    },
+    async getBlogById (id, userId) {
+        let sql = `select 
+        b.id,b.userId,nickName,avatarUrl,
+        (select count(1) from follow where userId =  ?) as isFollow,
+        title,author,audioAuthor,content,
+        b.url,b.time,
+        (select count(1) from thumb where blogId =  b.id)  as thumbs,
+        b.isRecommend,
+        (select count(1) from collection where userId = ? and blogId = b.id) as isCollection,
+        (select count(1) from thumb where userId = ? and blogId = b.id) as isThumb,
         b.createTime as createOriginalTime,
         date_format(b.createTime, '%Y-%m-%d %H:%i:%s' ) as createTime
         from blog as b 
@@ -68,9 +90,44 @@ const Helper = {
         left join user as u on b.userId = u.id
         where b.status = 1 
         and b.id = ?`;
-        sql = mysql.format(sql, [id]);
+        sql = mysql.format(sql, [userId, userId, userId, id]);
+        console.log(sql);
         const result = await mydb.dataCenter(sql).catch(e => [null]);
         return result[0];
+    },
+    /**
+     * 收藏，取消收藏
+     * @param {*} blogId
+     */
+    async collection (userId, blogId) {
+        let sql = 'select count(1) as count from collection where userId = ? and blogId = ?';
+        sql = mysql.format(sql, [userId, blogId]);
+        const ret = await mydb.dataCenter(sql).catch(e => [{count: 0}]);
+        if (ret && ret[0] && ret[0].count) {
+            sql = 'delete from collection where userId = ? and blogId = ?';
+        } else {
+            sql = 'insert into collection(userId,blogId,createTime) VALUES(?,?,now())';
+        }
+        sql = mysql.format(sql, [userId, blogId]);
+        const result = await mydb.dataCenter(sql).catch(e => false);
+        return result;
+    },
+    /**
+     * 点赞，取消点赞
+     * @param {*} blogId
+     */
+    async thumb (userId, blogId) {
+        let sql = 'select count(1) as count from thumb where userId = ? and blogId = ?';
+        sql = mysql.format(sql, [userId, blogId]);
+        const ret = await mydb.dataCenter(sql).catch(e => [{count: 0}]);
+        if (ret && ret[0] && ret[0].count) {
+            sql = 'delete from thumb where userId = ? and blogId = ?';
+        } else {
+            sql = 'insert into thumb(userId,blogId,createTime) VALUES(?,?,now())';
+        }
+        sql = mysql.format(sql, [userId, blogId]);
+        const result = await mydb.dataCenter(sql).catch(e => false);
+        return result;
     }
 };
 

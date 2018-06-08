@@ -1,6 +1,6 @@
 const Service = {
     async punch (req, res, next) {
-        const type = req.query.type;
+        // const type = req.query.type;
         const data = {
             mine: {
                 userId: 1,

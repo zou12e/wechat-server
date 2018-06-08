@@ -74,8 +74,38 @@ CREATE TABLE `huiyanbang`.`blog` (
   `status` TINYINT NULL DEFAULT 1 COMMENT '1正常 2禁用',
   PRIMARY KEY (`id`));
 
+-- 二期设计数据
+-- 收藏表
+CREATE TABLE `huiyanbang`.`collection` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `userId` INT(11) NOT NULL COMMENT 'userId',
+  `blogId` INT(11) NOT NULL COMMENT 'blogId',
+  `createTime` DATETIME NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`));
  
+-- 关注表
+CREATE TABLE `huiyanbang`.`follow` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `userId` INT(11) NOT NULL COMMENT 'userId',
+  `toUserId` INT(11) NOT NULL COMMENT '关注的userId',
+  `createTime` DATETIME NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`));
 
-
+-- 点赞表
+CREATE TABLE `huiyanbang`.`thumb` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `userId` INT(11) NOT NULL COMMENT 'userId',
+  `blogId` INT(11) NOT NULL COMMENT 'blogId',
+  `createTime` DATETIME NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`));
   
-  
+  -- 评价表
+CREATE TABLE `huiyanbang`.`comment` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `userId` INT(11) NOT NULL COMMENT 'userId',
+  `toUserId` INT(11) NOT NULL COMMENT 'toUserId',
+  `blogId` INT(11) NOT NULL COMMENT 'blogId',
+  `parentId` INT(11) NOT NULL COMMENT 'parentId',
+  `content` VARCHAR(20000) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT '评论内容',
+  `createTime` DATETIME NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`));
