@@ -1,5 +1,6 @@
 const mydb = require('../../../../db/mysql');
 const mysql = require('mysql');
+const moment = require('moment');
 
 const Helper = {
     /**
@@ -9,6 +10,20 @@ const Helper = {
         let sql = 'insert into blog(userId,audioId,time,url,type,createTime,updateTime) VALUES(?,?,?,?,?,now(),now())';
         sql = mysql.format(sql, [+blog.userId, +blog.audioId, +blog.time, blog.url, +blog.type]);
         const result = await mydb.dataCenter(sql).catch(e => false);
+
+        const today = moment().format('YYYY-MM-DD');
+        sql = 'select count(1) as count from record where userId = ? and date = ?';
+        sql = mysql.format(sql, [+blog.userId, today]);
+        const ret = await mydb.dataCenter(sql).catch(e => [{count: 0}]);
+        if (ret && ret[0].count === 0) {
+            sql = 'insert into record(userId,date,createTime) VALUES(?,?,now())';
+            sql = mysql.format(sql, [+blog.userId, today]);
+            await mydb.dataCenter(sql).catch(e => null);
+
+            sql = 'update user set days = days + 1 where id = ?';
+            sql = mysql.format(sql, [+blog.userId]);
+            await mydb.dataCenter(sql).catch(e => null);
+        }
         if (result && result.insertId) {
             return result.insertId;
         }
@@ -27,7 +42,7 @@ const Helper = {
         (select count(1) from follow where userId =  ?) as isFollow,
         title,author,audioAuthor,content,
         b.url,b.time,
-        (select count(1) from comment where blogId =  b.id)  as comments,
+        (select count(1) from comment where blogId =  b.id and status = 1)  as comments,
         (select count(1) from thumb where blogId =  b.id)  as thumbs,
         b.isRecommend,
         (select count(1) from collection where userId = ? and blogId = b.id) as isCollection,
@@ -62,17 +77,18 @@ const Helper = {
         (select count(1) from follow where userId =  ?) as isFollow,
         title,author,audioAuthor,content,
         b.url,b.time,
-        (select count(1) from comment where blogId =  b.id)  as comments,
+        (select count(1) from comment where blogId =  b.id and status = 1)  as comments,
         (select count(1) from thumb where blogId =  b.id)  as thumbs,
         b.isRecommend,
         (select count(1) from thumb where userId = ? and blogId = b.id) as isThumb,
         b.createTime as createOriginalTime,
         date_format(b.createTime, '%Y-%m-%d %H:%i:%s' ) as createTime
         from collection as c
-        left join blog as b on c.blogId = b.id 
+        inner join blog as b on c.blogId = b.id 
         left join audio as a on b.audioId = a.id
         left join user as u on b.userId = u.id
         where c.userId = ?
+        and b.status = 1 
         and ${lastId ? 'c.id < ' + mysql.format(lastId) : 'c.id > 0'} 
         order  by c.id desc
         limit 0 ,?`;

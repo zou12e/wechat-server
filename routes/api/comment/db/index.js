@@ -19,13 +19,14 @@ const Helper = {
      */
     async getCommentByBlogId (blogId) {
         let sql = `select c.id,c.blogId,c.parentId,c.userId,u.nickName,u.avatarUrl,c.content,
-        (select count(1) from comment where parentId = c.id  ) as replys,
+        (select count(1) from comment where parentId = c.id and status = 1 ) as replys,
         c.createTime as createOriginalTime,
         date_format(c.createTime, '%Y-%m-%d %H:%i:%s' ) as createTime
         FROM comment as c
         left join user as u on c.userId = u.id
         where c.blogId = ? 
         and c.parentId = 0
+        and c.status = 1 
         order by c.createTime`;
         sql = mysql.format(sql, [blogId]);
         const list = await mydb.dataCenter(sql).catch(e => []);
@@ -47,6 +48,7 @@ const Helper = {
             from comment as c
             left join user as u on c.userId = u.id
             where  ${cid} 
+            and c.status = 1 
             order by createTime desc`;
             const replys = await mydb.dataCenter(sql).catch(e => []);
             list.forEach(item => {
@@ -61,7 +63,7 @@ const Helper = {
             });
         }
 
-        sql = 'select count(1) as count from comment where blogId = ?';
+        sql = 'select count(1) as count from comment where blogId = ? and status = 1 ';
         sql = mysql.format(sql, [blogId]);
         const result = await mydb.dataCenter(sql).catch(e => [{count: 0}]);
         return {
@@ -71,12 +73,13 @@ const Helper = {
     },
     async getCommentById (commentId) {
         let sql = `select c.id,c.blogId,c.parentId,c.userId,u.nickName,u.avatarUrl,c.content,
-        (select count(1) from comment where parentId = c.id  ) as replys,
+        (select count(1) from comment where parentId = c.id and status = 1 ) as replys,
         c.createTime as createOriginalTime,
         date_format(c.createTime, '%Y-%m-%d %H:%i:%s' ) as createTime
         FROM comment as c
         left join user as u on c.userId = u.id
-        where c.id = ?`;
+        where c.id = ? 
+        and c.status = 1`;
         sql = mysql.format(sql, [commentId]);
         const list = await mydb.dataCenter(sql).catch(e => []);
         sql = `select c.id,c.parentId,c.userId,u.nickName,u.avatarUrl,c.content,
@@ -87,6 +90,7 @@ const Helper = {
         from comment as c
         left join user as u on c.userId = u.id
         where  c.parentId = ${list[0].id}
+        and c.status = 1 
         order by c.createTime `;
         const replys = await mydb.dataCenter(sql).catch(e => []);
         list[0].replyList = replys;

@@ -20,6 +20,7 @@ CREATE TABLE `huiyanbang`.`user` (
   `province` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT '省份',
   `country` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT '国家',
   `language` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT '语言',
+  `days` INT(11)  NULL DEFAULT 0 COMMENT '连续打卡天数',
   `createTime` DATETIME NULL COMMENT '创建时间',
   `updateTime` DATETIME NULL COMMENT '最后修改时间',
   `status` TINYINT NULL DEFAULT 1 COMMENT '1正常 2禁用',
@@ -79,7 +80,6 @@ CREATE TABLE `huiyanbang`.`blog` (
   `status` TINYINT NULL DEFAULT 1 COMMENT '1正常 2禁用',
   PRIMARY KEY (`id`));
 
--- 二期设计数据
 -- 收藏表
 CREATE TABLE `huiyanbang`.`collection` (
   `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
@@ -113,6 +113,15 @@ CREATE TABLE `huiyanbang`.`comment` (
   `parentId` INT(11) NOT NULL COMMENT 'parentId',
   `content` VARCHAR(255) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NULL COMMENT '评论内容',
   `createTime` DATETIME NULL COMMENT '创建时间',
+  `status` TINYINT NULL DEFAULT 1 COMMENT '1正常 2禁用',
   PRIMARY KEY (`id`));
 
 ALTER TABLE `huiyanbang`.`comment` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+-- 打卡记录
+CREATE TABLE `huiyanbang`.`record` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `userId` INT(11) NOT NULL COMMENT 'userId',
+  `date` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT '打卡时间',
+  `createTime` DATETIME NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`));
