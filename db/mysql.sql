@@ -39,11 +39,16 @@ CREATE TABLE `huiyanbang`.`audio` (
   `content` VARCHAR(20000) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT '文章内容',
   `time` INT(11)  NULL COMMENT '时长',
   `url` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT '音频地址', 
+  `banner` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT 'banner地址', 
   `type` TINYINT NULL DEFAULT 1 COMMENT '1早读 2晚讲',
   `createTime` DATETIME NULL COMMENT '创建时间',
   `updateTime` DATETIME NULL COMMENT '最后修改时间',
   `status` TINYINT NULL DEFAULT 1 COMMENT '1正常 2禁用',
   PRIMARY KEY (`id`));
+
+
+-- ALTER TABLE `huiyanbang`.`audio` 
+-- ADD COLUMN `banner` VARCHAR(255) NULL DEFAULT NULL AFTER `url`;
 
 -- insert
 INSERT INTO `huiyanbang`.`audio` (`title`, `author`, `audioAuthor`, `content`, `time`, `url`, `type`,`createTime`,`updateTime`, `status`)VALUES ('歌曲是有记忆的', '来自网络', '鹤翔', '一种感觉,歌曲是有记忆的。某个时候你经常听的某一首歌，后来你不再听它了。但有天你偶然间路过接口拐角又刚好听到，还是会一瞬间沉寂到当时的那种心情里。这种感觉就像空气中的味道一样。那是属于你自己的味道，说不清道不明。反正你一闻到空气中某个季节的某个味道，就会回想起很久以前的某些事。即便你心里早就已经忘了,但那一瞬间，你心里还是会咯噔一下。这种感觉很奇妙，很难用言语表达出来。也许它并不能影响你当下的状态,可你心里知道，这些歌曲真真切切地承载过你的记忆。', '80', 'https://www.zourunze.com/static/wechat/audio/1.m4a', '1',now(), now(),'1');
@@ -106,6 +111,8 @@ CREATE TABLE `huiyanbang`.`comment` (
   `toUserId` INT(11) NOT NULL COMMENT 'toUserId',
   `blogId` INT(11) NOT NULL COMMENT 'blogId',
   `parentId` INT(11) NOT NULL COMMENT 'parentId',
-  `content` VARCHAR(20000) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT '评论内容',
+  `content` VARCHAR(255) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NULL COMMENT '评论内容',
   `createTime` DATETIME NULL COMMENT '创建时间',
   PRIMARY KEY (`id`));
+
+ALTER TABLE `huiyanbang`.`comment` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;

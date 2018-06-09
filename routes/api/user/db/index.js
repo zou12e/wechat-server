@@ -83,7 +83,7 @@ const Helper = {
         let sql = `select 
         (select count(1) from follow where userId = ? ) as follows,
         (select count(1) from collection where userId = ? ) as collections,
-        (select count(1) from comment where userId = ? ) as comments`;
+        (select count(1) from comment where toUserId = ? ) as comments`;
         sql = mysql.format(sql, [userId, userId, userId]);
         const result = await mydb.dataCenter(sql).catch(e => [{follows: 0, collections: 0, comments: 0}]);
         return result[0];

@@ -91,7 +91,7 @@ const Helper = {
         let sql = `select 
         b.id,b.userId,nickName,avatarUrl,
         (select count(1) from follow where userId =  ?) as isFollow,
-        title,author,audioAuthor,content,
+        title,author,audioAuthor,content,banner,
         b.url,b.time,
         (select count(1) from thumb where blogId =  b.id)  as thumbs,
         b.isRecommend,

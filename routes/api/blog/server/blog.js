@@ -10,7 +10,7 @@ const Service = {
         const type = ~~req.query.type;
         const userId = req.id;
         const lastId = ~~req.query.lastId;
-        const ret = await db.getBlogList('type', type, userId, lastId, 5);
+        const ret = await db.getBlogList('type', type, userId, lastId, 30);
         res.success({
             list: ret.list,
             count: ret.count
@@ -23,7 +23,7 @@ const Service = {
         const userId = req.id;
         const searchUserId = ~~req.query.id;
         const lastId = ~~req.query.lastId;
-        const ret = await db.getBlogList('userId', searchUserId, userId, lastId, 5);
+        const ret = await db.getBlogList('userId', searchUserId, userId, lastId, 30);
         res.success({
             list: ret.list,
             count: ret.count
@@ -35,7 +35,7 @@ const Service = {
     async getCollectionBlogList (req, res, next) {
         const userId = req.id;
         const lastId = ~~req.query.lastId;
-        const ret = await db.getCollectionBlogList(userId, lastId, 5);
+        const ret = await db.getCollectionBlogList(userId, lastId, 30);
         res.success({
             list: ret.list,
             count: ret.count
@@ -80,7 +80,7 @@ const Service = {
             return res.success({id});
         }
 
-        res.error('add fail');
+        res.error('add blog fail');
     }
 };
 module.exports = Service;
