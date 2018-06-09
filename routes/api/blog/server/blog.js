@@ -10,8 +10,11 @@ const Service = {
         const type = ~~req.query.type;
         const userId = req.id;
         const lastId = ~~req.query.lastId;
-        const list = await db.getBlogList('type', type, userId, lastId, 20);
-        res.success({list});
+        const ret = await db.getBlogList('type', type, userId, lastId, 5);
+        res.success({
+            list: ret.list,
+            count: ret.count
+        });
     },
     /**
      * 查询用户发的微博
@@ -20,8 +23,11 @@ const Service = {
         const userId = req.id;
         const searchUserId = ~~req.query.id;
         const lastId = ~~req.query.lastId;
-        const list = await db.getBlogList('userId', searchUserId, userId, lastId, 20);
-        res.success({list});
+        const ret = await db.getBlogList('userId', searchUserId, userId, lastId, 5);
+        res.success({
+            list: ret.list,
+            count: ret.count
+        });
     },
     /**
      * 收藏微博
@@ -29,8 +35,11 @@ const Service = {
     async getCollectionBlogList (req, res, next) {
         const userId = req.id;
         const lastId = ~~req.query.lastId;
-        const list = await db.getCollectionBlogList(userId, lastId, 20);
-        res.success({list});
+        const ret = await db.getCollectionBlogList(userId, lastId, 5);
+        res.success({
+            list: ret.list,
+            count: ret.count
+        });
     },
     async thumb (req, res, next) {
         const userId = req.id;

@@ -23,7 +23,7 @@ const Helper = {
      */
     async getBlogList (condition, value, userId, lastId, size = 20) {
         let sql = `select 
-        b.id,b.userId,nickName,avatarUrl,
+        b.id, b.id as blogId,b.userId,nickName,avatarUrl,
         (select count(1) from follow where userId =  ?) as isFollow,
         title,author,audioAuthor,content,
         b.url,b.time,
@@ -39,19 +39,26 @@ const Helper = {
         left join user as u on b.userId = u.id
         where b.status = 1 
         and ?? = ? 
-        and ${lastId ? 'b.id < ' + mysql.format(lastId) : 'b.id > 0'} 
+        and ${lastId ? ('b.id < ' + mysql.format(lastId) + ' and b.isRecommend = 0') : 'b.id > 0'} 
         order by b.isRecommend desc, b.id desc
         limit 0 ,?`;
         sql = mysql.format(sql, [userId, userId, userId, 'b.' + condition, value, size]);
-        const result = await mydb.dataCenter(sql).catch(e => []);
-        return result;
+        const list = await mydb.dataCenter(sql).catch(e => []);
+
+        sql = 'select count(1) as count from blog where status = 1 and ?? = ?';
+        sql = mysql.format(sql, [condition, value]);
+        const ret = await mydb.dataCenter(sql).catch(e => [{count: 0}]);
+        return {
+            list,
+            count: ret[0].count
+        };
     },
     /**
      * 查看收藏微博
      */
     async getCollectionBlogList (userId, lastId, size = 20) {
         let sql = `select 
-        b.id,b.userId,nickName,avatarUrl,
+        c.id,b.id as blogId,b.userId,nickName,avatarUrl,
         (select count(1) from follow where userId =  ?) as isFollow,
         title,author,audioAuthor,content,
         b.url,b.time,
@@ -65,13 +72,20 @@ const Helper = {
         left join blog as b on c.blogId = b.id 
         left join audio as a on b.audioId = a.id
         left join user as u on b.userId = u.id
-        and c.userId = ?
+        where c.userId = ?
         and ${lastId ? 'c.id < ' + mysql.format(lastId) : 'c.id > 0'} 
         order  by c.id desc
         limit 0 ,?`;
         sql = mysql.format(sql, [userId, userId, userId, size]);
-        const result = await mydb.dataCenter(sql).catch(e => []);
-        return result;
+        const list = await mydb.dataCenter(sql).catch(e => []);
+
+        sql = 'select count(1) as count from collection where userId = ?';
+        sql = mysql.format(sql, [userId]);
+        const ret = await mydb.dataCenter(sql).catch(e => [{count: 0}]);
+        return {
+            list,
+            count: ret[0].count
+        };
     },
     async getBlogById (id, userId) {
         let sql = `select 
@@ -91,7 +105,6 @@ const Helper = {
         where b.status = 1 
         and b.id = ?`;
         sql = mysql.format(sql, [userId, userId, userId, id]);
-        console.log(sql);
         const result = await mydb.dataCenter(sql).catch(e => [null]);
         return result[0];
     },

@@ -35,12 +35,7 @@ const Service = {
         res.success(data);
     },
     async getInfo (req, res, next) {
-        const data = {
-            follows: 2,
-            collections: 1,
-            comments: 2
-        };
-        res.success(data);
+        res.success(await db.getCountInfo(req.id));
     },
     async getPunchInfo (req, res, next) {
         const data = {
