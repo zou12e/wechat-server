@@ -28,7 +28,9 @@ CREATE TABLE `huiyanbang`.`user` (
 
  
 ALTER TABLE `huiyanbang`.`user` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
- 
+
+-- ALTER TABLE `huiyanbang`.`user` 
+-- ADD COLUMN `days` INT(11) NULL DEFAULT 0 AFTER `language`;
 
 
 -- 音频表 慧言帮
