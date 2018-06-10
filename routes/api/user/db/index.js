@@ -1,5 +1,6 @@
 const mydb = require('../../../../db/mysql');
 const mysql = require('mysql');
+const moment = require('moment');
 
 const Helper = {
     /**
@@ -83,11 +84,52 @@ const Helper = {
         let sql = `select 
         (select count(1) from follow where userId = ? ) as follows,
         (select count(1) from collection where userId = ? ) as collections,
-        (select count(1) from comment where toUserId = ? and status = 1 ) as comments`;
-        sql = mysql.format(sql, [userId, userId, userId]);
-        const result = await mydb.dataCenter(sql).catch(e => [{follows: 0, collections: 0, comments: 0}]);
+        (select count(1) from comment where toUserId = ? and status = 1 ) as comments,
+        (select days from user where id = ? ) as continuDays,
+        (select count(1) from record where userId = ? ) as punchDays`;
+        sql = mysql.format(sql, [userId, userId, userId, userId, userId]);
+        const result = await mydb.dataCenter(sql).catch(e => [{follows: 0, collections: 0, comments: 0, continuDays: 0, punchDays: 0}]);
         return result[0];
+    },
+    async getRecordInfo (userId) {
+        let sql = `select date from record where userId = ? order by date desc`;
+        sql = mysql.format(sql, [userId]);
+        const list = await mydb.dataCenter(sql).catch(e => []);
+        const current = moment();
+        // 如果当天没有打卡， 从前一天的数据开始算
+        if (list && list.length && current.format('YYYY-MM-DD') !== list[0].date) {
+            current.subtract(1, 'days');
+        }
+        list.forEach(item => {
+            if (current.format('YYYY-MM-DD') === item.date) {
+                item.continu = true;
+                current.subtract(1, 'days');
+            } else {
+                return false;
+            }
+        });
+        return list;
+    },
+    async maintainRecord () {
+        let sql = `select u.id, u.days, count(r.date) as count from user as u
+        left join ( select date, userId from record where date = ? ) as   r on u.id = r.userId
+        group by u.id `;
+        const ldate = moment().subtract(1, 'days').format('YYYY-MM-DD');
+        sql = mysql.format(sql, [ldate]);
+        const list = await mydb.dataCenter(sql).catch(e => []);
+        const userIds = [];
+        list.forEach(item => {
+            if (!item.count && item.days) {
+                userIds.push(`id = ${item.id}`);
+            }
+        });
+        if (userIds && userIds.length) {
+            const sqlWhere = userIds.join(' or ');
+            sql = 'update user set days = 0 where ' + sqlWhere;
+            await mydb.dataCenter(sql);
+        }
     }
+
 };
 
 module.exports = Helper;

@@ -1,5 +1,8 @@
 
 const db = require('../db');
+const moment = require('moment');
+const config = require('config');
+const beginDate = config.get('beginDate');
 const Service = {
     async follow (req, res, next) {
         const userId = req.id;
@@ -35,17 +38,14 @@ const Service = {
         res.success(data);
     },
     async getInfo (req, res, next) {
-        res.success(await db.getCountInfo(req.id));
+        const data = await db.getCountInfo(req.id);
+        data.allDays = moment().diff(moment(beginDate), 'days');
+        res.success(data);
     },
     async getPunchInfo (req, res, next) {
-        const data = {
-            allDays: 30,
-            punchDays: 14,
-            list: [
-                13, 14, 15, 21, 22, 23, 24, 25, 26, 27, 28
-            ]
-        };
-        res.success(data);
+        const userId = req.id;
+        const list = await db.getRecordInfo(userId);
+        res.success({list});
     }
 };
 module.exports = Service;
