@@ -1,5 +1,4 @@
 
-const moment = require('moment');
 const _ = require('lodash');
 const db = require('../db');
 const Service = {
@@ -29,6 +28,10 @@ const Service = {
             return res.success({id});
         }
         res.error('add blog fail');
+    },
+    async getMineComments (req, res, next) {
+        const userId = req.id;
+        return res.success({list: await db.getMineComments(userId)});
     }
 };
 module.exports = Service;

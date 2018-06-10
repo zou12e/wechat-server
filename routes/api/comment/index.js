@@ -13,4 +13,7 @@ router.get('/getCommentById', auth.checkSession, server.getCommentById);
 // 评论
 router.post('/add', auth.checkSession, server.add);
 
+// 获取我的评论
+router.get('/getMineComments', auth.checkSession, server.getMineComments);
+
 module.exports = router;

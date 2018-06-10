@@ -95,6 +95,20 @@ const Helper = {
         const replys = await mydb.dataCenter(sql).catch(e => []);
         list[0].replyList = replys;
         return list[0];
+    },
+    async getMineComments (userId) {
+        let sql = `select 
+        c.id, c.parentId, c.userId,c.blogId,
+        u.nickName, u.avatarUrl,c.content,
+        c.createTime as createOriginalTime,
+        date_format(c.createTime, '%Y-%m-%d %H:%i:%s' ) as createTime
+        from comment  as c
+        left join user as u on c.userId = u.id
+        where toUserId = ?
+        order by c.createTime desc`;
+        sql = mysql.format(sql, [userId]);
+        const list = await mydb.dataCenter(sql).catch(e => []);
+        return list;
     }
 };
 
