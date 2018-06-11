@@ -17,7 +17,7 @@ const Helper = {
      */
     async getUserInfoById (userId, mineUserId) {
         let sql = 'select *,  (select count(1) from follow where userId =  ? and toUserId = ? ) as isFollow  from  user where id = ? and status = 1';
-        sql = mysql.format(sql, [userId, mineUserId, userId]);
+        sql = mysql.format(sql, [mineUserId, userId, userId]);
         const result = await mydb.dataCenter(sql).catch(e => [null]);
         return result[0];
     },
