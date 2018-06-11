@@ -34,7 +34,9 @@ const Service = {
         res.success(data);
     },
     async getUserById (req, res, next) {
-        const data = await db.getUserInfoById(~~req.query.id);
+        const mineUserId = req.id;
+        const userId = ~~req.query.id;
+        const data = await db.getUserInfoById(userId, mineUserId);
         res.success(data);
     },
     async getInfo (req, res, next) {

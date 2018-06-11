@@ -15,9 +15,9 @@ const Helper = {
     /**
      * 查询微信用户信息
      */
-    async getUserInfoById (id) {
-        let sql = 'select *,  (select count(1) from follow where userId =  ?) as isFollow  from  user where id = ? and status = 1';
-        sql = mysql.format(sql, [id, id]);
+    async getUserInfoById (userId, mineUserId) {
+        let sql = 'select *,  (select count(1) from follow where userId =  ? and toUserId = ? ) as isFollow  from  user where id = ? and status = 1';
+        sql = mysql.format(sql, [userId, mineUserId, userId]);
         const result = await mydb.dataCenter(sql).catch(e => [null]);
         return result[0];
     },
