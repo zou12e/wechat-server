@@ -39,7 +39,7 @@ const Helper = {
     async getBlogList (condition, value, userId, lastId, size = 20) {
         let sql = `select 
         b.id, b.id as blogId,b.userId,nickName,avatarUrl,
-        (select count(1) from follow where userId =  ?) as isFollow,
+        (select count(1) from follow where userId =  ? and toUserId = b.userId) as isFollow,
         title,author,audioAuthor,content,
         b.url,b.time,
         (select count(1) from comment where blogId =  b.id and status = 1)  as comments,
@@ -74,7 +74,7 @@ const Helper = {
     async getCollectionBlogList (userId, lastId, size = 20) {
         let sql = `select 
         c.id,b.id as blogId,b.userId,nickName,avatarUrl,
-        (select count(1) from follow where userId =  ?) as isFollow,
+        (select count(1) from follow where userId =  ? and toUserId = b.userId ) as isFollow,
         title,author,audioAuthor,content,
         b.url,b.time,
         (select count(1) from comment where blogId =  b.id and status = 1)  as comments,
@@ -84,7 +84,7 @@ const Helper = {
         b.createTime as createOriginalTime,
         date_format(b.createTime, '%Y-%m-%d %H:%i:%s' ) as createTime
         from collection as c
-        inner join blog as b on c.blogId = b.id 
+        left join blog as b on c.blogId = b.id 
         left join audio as a on b.audioId = a.id
         left join user as u on b.userId = u.id
         where c.userId = ?
@@ -106,7 +106,7 @@ const Helper = {
     async getBlogById (id, userId) {
         let sql = `select 
         b.id,b.userId,nickName,avatarUrl,
-        (select count(1) from follow where userId =  ?) as isFollow,
+        (select count(1) from follow where userId =  ? and toUserId = b.userId ) as isFollow,
         title,author,audioAuthor,content,banner,
         b.url,b.time,
         (select count(1) from thumb where blogId =  b.id)  as thumbs,
