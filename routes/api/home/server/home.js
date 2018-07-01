@@ -1,18 +1,10 @@
 const moment = require('moment');
 const db = require('../db');
-const config = require('config');
-const beginDate = config.get('beginDate');
+const weeks = ['天', '一', '二', '三', '四', '五', '六'];
 const Service = {
 
     async getReadSpeak (req, res, next) {
-        let read = {};
-        const id = await db.getRecommend();
-        if (id) {
-            read = await db.getAudioInfoById(id);
-        } else {
-            const day = moment().diff(moment(beginDate), 'days');
-            read = await db.getReadInfo(day);
-        }
+        const read = await db.getRecommend();
         if (!read) {
             return res.error('no data');
         }
@@ -26,6 +18,9 @@ const Service = {
             info: {
                 time: '18:00',
                 date: moment().format('YYYY-MM-DD'),
+                day: moment().format('DD'),
+                ym: moment().format('YYYY.MM'),
+                week: '星期' + weeks[moment().format('d')],
                 isRead: true
             }
         };
