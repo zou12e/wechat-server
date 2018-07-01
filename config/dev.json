@@ -7,8 +7,8 @@
         "secret": "wechat"
     },
     "wechat": {
-        "appid": "wx037232cadf17facf",
-        "secret": "085507699a2ddaaac855d2e5d27f9e5e"
+        "appid": "wxa5c939f14afa9c43",
+        "secret": "c2b4075d35ce34d9ef7a3a4a13c184c8"
     },
     "mysql": {
         "host": "127.0.0.1",
@@ -17,5 +17,5 @@
         "user": "hybroot",
         "password": "123456"
     },
-    "beginDate" : "2018-06-08 00:00:00"
+    "beginDate" : "2018-06-28 00:00:00"
 }

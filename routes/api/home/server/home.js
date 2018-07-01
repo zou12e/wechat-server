@@ -5,9 +5,14 @@ const beginDate = config.get('beginDate');
 const Service = {
 
     async getReadSpeak (req, res, next) {
-        const day = moment().diff(moment(beginDate), 'days');
-
-        const read = await db.getReadInfo(day);
+        let read = {};
+        const id = await db.getRecommend();
+        if (id) {
+            read = await db.getAudioInfoById(id);
+        } else {
+            const day = moment().diff(moment(beginDate), 'days');
+            read = await db.getReadInfo(day);
+        }
         if (!read) {
             return res.error('no data');
         }
@@ -27,22 +32,13 @@ const Service = {
         res.success(data);
     },
     async changeInfo  (req, res, next) {
-        const type = ~~req.query.type; // 1 早读  2晚讲
-        let data = {};
-        if (type === 1) {
-            const count = await db.getReadCount();
-            const day = parseInt(Math.random() * count);
-            data = await db.getReadInfo(day);
-            if (!data) {
-                return res.error('no data');
-            }
-        } else {
-            data = {
-                id: 1,
-                title: '歌曲是有记忆的',
-                date: moment().format('YYYY-MM-DD')
-            };
+        const count = await db.getAudioCount();
+        const day = parseInt(Math.random() * count);
+        const data = await db.getReadInfo(day);
+        if (!data) {
+            return res.error('no data');
         }
+
         res.success(data);
     }
 };
