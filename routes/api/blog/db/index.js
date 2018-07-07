@@ -103,6 +103,9 @@ const Helper = {
             count: ret[0].count
         };
     },
+    /**
+     * 查找blog详情
+     */
     async getBlogById (id, userId) {
         let sql = `select 
         b.id,b.userId,nickName,avatarUrl,
@@ -126,7 +129,6 @@ const Helper = {
     },
     /**
      * 收藏，取消收藏
-     * @param {*} blogId
      */
     async collection (userId, blogId) {
         let sql = 'select count(1) as count from collection where userId = ? and blogId = ?';
@@ -143,7 +145,6 @@ const Helper = {
     },
     /**
      * 点赞，取消点赞
-     * @param {*} blogId
      */
     async thumb (userId, blogId) {
         let sql = 'select count(1) as count from thumb where userId = ? and blogId = ?';

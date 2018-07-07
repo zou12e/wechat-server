@@ -85,7 +85,7 @@ CREATE TABLE `huiyanbang`.`blog` (
   `time` INT(11)  NULL COMMENT '时长',
   `url` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL COMMENT '音频地址', 
   `type` TINYINT NULL DEFAULT 1 COMMENT '类型',
-  `score` INT(11)  NULL DEFAULT 1 COMMENT '分数时长',
+  `score` INT(11)  NULL DEFAULT 0 COMMENT '分数时长',
   `isRecommend` TINYINT NULL DEFAULT 0 COMMENT '1置顶 0未置顶',
   `createTime` DATETIME NULL COMMENT '创建时间',
   `updateTime` DATETIME NULL COMMENT '最后修改时间',

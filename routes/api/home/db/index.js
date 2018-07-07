@@ -3,12 +3,18 @@ const mysql = require('mysql');
 const cache = require('memory-cache');
 
 const Helper = {
-    async getReadInfo (diffDays) {
+    /**
+     * 查找语音
+     */
+    async getAudioInfo (diffDays) {
         let sql = 'select * from audio where status = 1 limit ? ,1';
         sql = mysql.format(sql, diffDays);
         const result = await mydb.dataCenter(sql).catch(e => [null]);
         return result[0];
     },
+    /**
+     * 查找语音
+     */
     async getAudioInfoById (id) {
         let sql = 'select * from audio where  id = ?';
         sql = mysql.format(sql, id);
@@ -39,7 +45,7 @@ const Helper = {
             } else {
                 const count = await Helper.getAudioCount();
                 const index = parseInt(Math.random() * count);
-                const data = await Helper.getReadInfo(index);
+                const data = await Helper.getAudioInfo(index);
                 audio = JSON.stringify(data);
             }
         }

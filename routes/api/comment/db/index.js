@@ -71,6 +71,9 @@ const Helper = {
             count: result[0].count
         };
     },
+    /**
+     * 查下评论详情
+     */
     async getCommentById (commentId) {
         let sql = `select c.id,c.blogId,c.parentId,c.userId,u.nickName,u.avatarUrl,c.content,
         (select count(1) from comment where parentId = c.id and status = 1 ) as replys,
@@ -96,6 +99,9 @@ const Helper = {
         list[0].replyList = replys;
         return list[0];
     },
+    /**
+     * 获取我的评论
+     */
     async getMineComments (userId) {
         let sql = `select 
         c.id, c.parentId, c.userId,c.blogId,

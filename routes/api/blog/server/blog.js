@@ -4,13 +4,12 @@ const db = require('../db');
 const host = config.get('host');
 const Service = {
     /**
-     * 查询发现， 早读，晚讲微博
+     * 查询发现， 所有微博
      */
     async list (req, res, next) {
-        const type = ~~req.query.type;
         const userId = req.id;
         const lastId = ~~req.query.lastId;
-        const ret = await db.getBlogList('type', type, userId, lastId, 30);
+        const ret = await db.getBlogList('status', 1, userId, lastId, 30);
         res.success({
             list: ret.list,
             count: ret.count
@@ -41,6 +40,9 @@ const Service = {
             count: ret.count
         });
     },
+    /**
+     * 点赞微博
+     */
     async thumb (req, res, next) {
         const userId = req.id;
         const blogId = ~~req.body.id;
@@ -50,6 +52,9 @@ const Service = {
         }
         res.error('thumb blog fail');
     },
+    /**
+     * 收藏微博
+     */
     async collection (req, res, next) {
         const userId = req.id;
         const blogId = ~~req.body.id;
@@ -59,12 +64,18 @@ const Service = {
         }
         res.error('collection blog fail');
     },
+    /**
+     * 查下微博详情
+     */
     async getBlogById (req, res, next) {
         const id = ~~req.query.id;
         const userId = req.id;
         const data = await db.getBlogById(id, userId);
         res.success(data);
     },
+    /**
+     * 上传语音
+     */
     async uploadFile (req, res, next) {
         const data = {};
         if (req.file) {
@@ -73,6 +84,9 @@ const Service = {
         }
         res.error(data);
     },
+    /**
+     * 保存微博
+     */
     async save (req, res, next) {
         const blog = _.assign({userId: req.id}, req.body);
         const id = await db.addBlog(blog);

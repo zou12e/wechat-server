@@ -29,7 +29,7 @@ const Service = {
     async changeInfo  (req, res, next) {
         const count = await db.getAudioCount();
         const day = parseInt(Math.random() * count);
-        const data = await db.getReadInfo(day);
+        const data = await db.getAudioInfo(day);
         if (!data) {
             return res.error('no data');
         }

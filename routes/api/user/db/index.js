@@ -80,6 +80,9 @@ const Helper = {
         const result = await mydb.dataCenter(sql).catch(e => false);
         return result;
     },
+    /**
+     * 获取关注，收藏，评论，连续，累计打卡
+     */
     async getCountInfo (userId) {
         let sql = `select 
         (select count(1) from follow where userId = ? ) as follows,
@@ -91,6 +94,9 @@ const Helper = {
         const result = await mydb.dataCenter(sql).catch(e => [{follows: 0, collections: 0, comments: 0, continuDays: 0, punchDays: 0}]);
         return result[0];
     },
+    /**
+     * 查询所有打卡记录
+     */
     async getRecordInfo (userId) {
         let sql = `select date from record where userId = ? order by date desc`;
         sql = mysql.format(sql, [userId]);
@@ -110,6 +116,9 @@ const Helper = {
         });
         return list;
     },
+    /**
+     * 计算连续打卡天数
+     */
     async maintainRecord () {
         let sql = `select u.id, u.days, count(r.date) as count from user as u
         left join ( select date, userId from record where date = ? ) as   r on u.id = r.userId
