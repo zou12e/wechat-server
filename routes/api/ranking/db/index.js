@@ -24,13 +24,14 @@ const Helper = {
         let sql = ` select u.id as userId, nickName,avatarUrl,
         (select count(1) from record as r where r.userId = u.id) days
         from user as u
-        order by days desc`;
+        order by days desc
+        limit 0, 50`;
         const list = await mydb.dataCenter(sql).catch(e => []);
 
         sql = `select v.* from (
             select id as userId, nickName,avatarUrl,(select count(1) from record as r where r.userId = id)  as days,(@rowno:=@rowno+1) as ranking from user,
             (select (@rowno :=0) ) b order by days desc ) as v
-           where v.userId = ?`;
+            where v.userId = ?`;
         sql = mysql.format(sql, [userId]);
         const mine = await mydb.dataCenter(sql).catch(e => [{}]);
         return {
