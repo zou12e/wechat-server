@@ -10,6 +10,7 @@ const Helper = {
                     left join blog as b on t.blogId = b.id 
                     left join audio as a on a.id = b.audioId
                     left join user as u on u.id = b.userId
+                    where b.status = 1
                     group by t.blogId 
                     order by thumbs desc
                     limit 0, 50`;

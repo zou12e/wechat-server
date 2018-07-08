@@ -110,7 +110,10 @@ const Helper = {
         date_format(c.createTime, '%Y-%m-%d %H:%i:%s' ) as createTime
         from comment  as c
         left join user as u on c.userId = u.id
-        where toUserId = ?
+        left join blog as b on b.id = c.blogId
+        where 
+        b.status = 1
+        and toUserId = ?
         order by c.createTime desc`;
         sql = mysql.format(sql, [userId]);
         const list = await mydb.dataCenter(sql).catch(e => []);

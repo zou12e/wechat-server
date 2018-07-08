@@ -95,6 +95,17 @@ const Service = {
         }
 
         res.error('add blog fail');
+    },
+    /**
+     * 删除微博
+     */
+    async delete (req, res, next) {
+        const id = ~~req.body.id;
+        const data = await db.deleteBlog(id);
+        if (data) {
+            return res.success({});
+        }
+        res.error('delete blog fail');
     }
 };
 module.exports = Service;

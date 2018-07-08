@@ -33,12 +33,10 @@ const Helper = {
      * 查看所有微博
      * 个人微博
      * 他人微博
-     * 早读微博
-     * 晚讲微博
      */
     async getBlogList (condition, value, userId, lastId, size = 20) {
         let sql = `select 
-        b.id, b.id as blogId,b.userId,nickName,avatarUrl,
+        b.id, b.id as blogId,b.userId,nickName,avatarUrl,banner,
         (select count(1) from follow where userId =  ? and toUserId = b.userId) as isFollow,
         title,author,audioAuthor,content,
         b.url,b.time,
@@ -73,13 +71,14 @@ const Helper = {
      */
     async getCollectionBlogList (userId, lastId, size = 20) {
         let sql = `select 
-        c.id,b.id as blogId,b.userId,nickName,avatarUrl,
+        c.id as collectionId,b.id ,b.userId,nickName,avatarUrl,banner,
         (select count(1) from follow where userId =  ? and toUserId = b.userId ) as isFollow,
         title,author,audioAuthor,content,
         b.url,b.time,
         (select count(1) from comment where blogId =  b.id and status = 1)  as comments,
         (select count(1) from thumb where blogId =  b.id)  as thumbs,
         b.isRecommend,
+        1 as isCollection,
         (select count(1) from thumb where userId = ? and blogId = b.id) as isThumb,
         b.createTime as createOriginalTime,
         date_format(b.createTime, '%Y-%m-%d %H:%i:%s' ) as createTime
@@ -103,12 +102,9 @@ const Helper = {
             count: ret[0].count
         };
     },
-    /**
-     * 查找blog详情
-     */
     async getBlogById (id, userId) {
         let sql = `select 
-        b.id,b.userId,nickName,avatarUrl,
+        b.id,b.userId,nickName,avatarUrl,banner,
         (select count(1) from follow where userId =  ? and toUserId = b.userId ) as isFollow,
         title,author,audioAuthor,content,banner,
         b.url,b.time,
@@ -129,6 +125,7 @@ const Helper = {
     },
     /**
      * 收藏，取消收藏
+     * @param {*} blogId
      */
     async collection (userId, blogId) {
         let sql = 'select count(1) as count from collection where userId = ? and blogId = ?';
@@ -145,6 +142,7 @@ const Helper = {
     },
     /**
      * 点赞，取消点赞
+     * @param {*} blogId
      */
     async thumb (userId, blogId) {
         let sql = 'select count(1) as count from thumb where userId = ? and blogId = ?';
@@ -156,6 +154,15 @@ const Helper = {
             sql = 'insert into thumb(userId,blogId,createTime) VALUES(?,?,now())';
         }
         sql = mysql.format(sql, [userId, blogId]);
+        const result = await mydb.dataCenter(sql).catch(e => false);
+        return result;
+    },
+    /**
+     * 删除微博
+     */
+    async deleteBlog (id) {
+        let sql = 'delete from blog where id = ?';
+        sql = mysql.format(sql, [id]);
         const result = await mydb.dataCenter(sql).catch(e => false);
         return result;
     }

@@ -21,11 +21,17 @@ const Helper = {
         const result = await mydb.dataCenter(sql).catch(e => [null]);
         return result[0];
     },
+    /**
+     * 获取语音总条数
+     */
     async getAudioCount () {
         const sql = 'select count(1) as count from audio where status = 1';
         const result = await mydb.dataCenter(sql).catch(e => [{count: 0}]);
         return result[0].count;
     },
+    /**
+     * 获取推荐语音
+     */
     async getRecommends () {
         const sql = 'select id from recommend order by sort;';
         const result = await mydb.dataCenter(sql).catch(e => []);

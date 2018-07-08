@@ -86,8 +86,8 @@ const Helper = {
     async getCountInfo (userId) {
         let sql = `select 
         (select count(1) from follow where userId = ? ) as follows,
-        (select count(1) from collection where userId = ? ) as collections,
-        (select count(1) from comment where toUserId = ? and status = 1 ) as comments,
+        (select count(1) from collection as c left join blog as b on c.blogId = b.id where b.status = 1 and c.userId = ? ) as collections,
+        (select count(1) from comment as c left join blog as b on c.blogId = b.id where c.toUserId = ? and c.status = 1 and b.status = 1 ) as comments,
         (select days from user where id = ? ) as continuDays,
         (select count(1) from record where userId = ? ) as punchDays`;
         sql = mysql.format(sql, [userId, userId, userId, userId, userId]);
