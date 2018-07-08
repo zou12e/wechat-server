@@ -45,7 +45,7 @@ router.post('/uploadFile', auth.checkSession, upload.single('file'), server.uplo
 // 保存blog
 router.post('/save', auth.checkSession, server.save);
 
-// 保存blog
+// 删除blog
 router.post('/delete', auth.checkSession, server.delete);
 
 module.exports = router;

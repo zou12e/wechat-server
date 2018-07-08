@@ -71,7 +71,7 @@ const Helper = {
      */
     async getCollectionBlogList (userId, lastId, size = 20) {
         let sql = `select 
-        c.id as collectionId,b.id ,b.userId,nickName,avatarUrl,banner,
+        c.id, b.id as blogId,b.userId,nickName,avatarUrl,banner,
         (select count(1) from follow where userId =  ? and toUserId = b.userId ) as isFollow,
         title,author,audioAuthor,content,
         b.url,b.time,
@@ -161,7 +161,7 @@ const Helper = {
      * 删除微博
      */
     async deleteBlog (id) {
-        let sql = 'delete from blog where id = ?';
+        let sql = 'update blog set status = 0 where id = ?';
         sql = mysql.format(sql, [id]);
         const result = await mydb.dataCenter(sql).catch(e => false);
         return result;
