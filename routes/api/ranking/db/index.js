@@ -24,7 +24,7 @@ const Helper = {
         let sql = ` select u.id as userId, nickName,avatarUrl,
         (select count(1) from record as r where r.userId = u.id) days
         from user as u
-        where u.nickName != null
+        where u.nickName is not null
         order by days desc
         limit 0, 50`;
         const list = await mydb.dataCenter(sql).catch(e => []);
@@ -46,7 +46,7 @@ const Helper = {
     async getContinuePunchRanking (userId) {
         let sql = ` select u.id as userId, nickName,avatarUrl, days
         from user as u
-        where u.nickName != null
+        where u.nickName is not null
         order by days desc
         limit 0, 50`;
         const list = await mydb.dataCenter(sql).catch(e => []);
