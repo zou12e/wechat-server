@@ -72,6 +72,8 @@ const Helper = {
             if (data) {
                 cache.put('Recommend', JSON.stringify(data));
             }
+        } else {
+            cache.put('Recommend', '');
         }
     }
 //   - INSERT INTO `huiyanbang`.`recommend` (`audioId`, `sort`, `createTime`)VALUES (1,1 ,now());
