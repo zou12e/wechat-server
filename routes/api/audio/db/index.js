@@ -17,9 +17,7 @@ const Helper = {
     async getAudiosByType (type) {
         let sql = 'select * from audio where type = ? and status = 1';
         sql = mysql.format(sql, type);
-        console.log(sql);
         const result = await mydb.dataCenter(sql).catch(e => []);
-        console.log(result);
         return result;
     }
 };
