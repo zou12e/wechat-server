@@ -105,12 +105,16 @@ const Helper = {
     async getMineComments (userId) {
         let sql = `select 
         c.id, c.parentId, c.userId,c.blogId,
+        title,b.url,a.banner,
+        b.createTime as blogCreateOriginalTime,
+        date_format(b.createTime, '%Y-%m-%d %H:%i:%s' ) as blogCreateTime,
         u.nickName, u.avatarUrl,c.content,
         c.createTime as createOriginalTime,
         date_format(c.createTime, '%Y-%m-%d %H:%i:%s' ) as createTime
         from comment  as c
         left join user as u on c.userId = u.id
         left join blog as b on b.id = c.blogId
+        left join audio as a on b.audioId = a.id
         where 
         b.status = 1
         and toUserId = ?
