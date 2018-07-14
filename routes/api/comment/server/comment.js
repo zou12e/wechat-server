@@ -27,7 +27,15 @@ const Service = {
         if (id) {
             return res.success({id});
         }
-        res.error('add blog fail');
+        res.error('add comment fail');
+    },
+    async delete (req, res, next) {
+        const commentId = ~~req.body.id;
+        const result = await db.deleteComment(commentId);
+        if (result) {
+            return res.success();
+        }
+        res.error('delete comment fail');
     },
     async getMineComments (req, res, next) {
         const userId = req.id;

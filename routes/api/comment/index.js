@@ -13,6 +13,9 @@ router.get('/getCommentById', auth.checkSession, server.getCommentById);
 // 评论
 router.post('/add', auth.checkSession, server.add);
 
+// 删除评论
+router.post('/delete', auth.checkSession, server.delete);
+
 // 获取我的评论
 router.get('/getMineComments', auth.checkSession, server.getMineComments);
 

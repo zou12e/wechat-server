@@ -15,6 +15,18 @@ const Helper = {
         return false;
     },
     /**
+     * 删除评论
+     */
+    async deleteComment (id) {
+        let sql = 'update comment set status = 0 where id = ? or parentId = ?;';
+        sql = mysql.format(sql, [+id, +id]);
+        const result = await mydb.dataCenter(sql).catch(e => false);
+        if (result) {
+            return true;
+        }
+        return false;
+    },
+    /**
      * 获取评论记录
      */
     async getCommentByBlogId (blogId) {
@@ -116,6 +128,7 @@ const Helper = {
         left join blog as b on b.id = c.blogId
         left join audio as a on b.audioId = a.id
         where 
+        c.status = 1
         b.status = 1
         and toUserId = ?
         order by c.createTime desc`;
