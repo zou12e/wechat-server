@@ -104,7 +104,7 @@ const Helper = {
     },
     async getBlogById (id, userId) {
         let sql = `select 
-        b.id,b.userId,nickName,avatarUrl,banner,
+        b.id,b.userId,nickName,avatarUrl,banner,b.audioId,
         (select count(1) from follow where userId =  ? and toUserId = b.userId ) as isFollow,
         title,author,audioAuthor,content,banner,
         b.url,b.time,
