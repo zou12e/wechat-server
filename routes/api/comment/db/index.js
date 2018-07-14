@@ -129,7 +129,7 @@ const Helper = {
         left join audio as a on b.audioId = a.id
         where 
         c.status = 1
-        b.status = 1
+        and b.status = 1
         and toUserId = ?
         order by c.createTime desc`;
         sql = mysql.format(sql, [userId]);
