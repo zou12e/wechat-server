@@ -1,6 +1,7 @@
 const config = require('config');
 const path = require('path');
 const fs = require('fs');
+const request = require('request');
 const _ = require('lodash');
 const gm = require('gm').subClass({imageMagick: true});
 const db = require('../db');
@@ -125,48 +126,48 @@ const Service = {
         /**
          * 不存在头像先保存头像
          */
-        await saveHead(_head, _headPath).catch(err => {
-            if (err) {
-                console.log(err);
-            }
+        const result = await saveHead(_head, _headPath).catch(err => {
+            console.log(err);
             return res.error('save blogImage fail');
         });
-        gm()
-            .in('-page', '+0+0')
-            .in(_bg)
-            .in('-page', '+0+1159')
-            .in(_bottom)
-            .in('-page', '+55+382')
-            .in(_star)
-            .in('-page', '+252+550')
-            .in(_gw)
-            .in('-page', '+386+550')
-            .in(_sw)
-            .in('-page', '+62+880')
-            .in(_white)
-            .in('-page', '+93+905')
-            .in(_headPath)
-            .fontSize(30)
-            .fill('#ffffff')
-            .font(_font)
-            .drawText(331, 537, '言值分')
-            .fontSize(34)
-            .drawText(190, 805, `恭喜您，超过${info.blog.percent || 30}%朗读者`)
-            .fill('#999999')
-            .fontSize(28)
-            .drawText(86, 1050, '连续打卡')
-            .drawText(441, 1050, '累计打卡')
-            .fill('#000000')
-            .drawText(238, 1050, `${info.continuDays}天`)
-            .drawText(593, 1050, `${info.continuDays}次`)
-            .drawText(168, 940, `${filteremoji(info.blog.nickName)}`)
-            .mosaic()
-            .write(_path, err => {
-                if (err) {
-                    return res.error('save blogImage fail');
-                }
-                res.success(`${host}/static/wechat/images2/${_name}`);
-            });
+        if (result) {
+            gm()
+                .in('-page', '+0+0')
+                .in(_bg)
+                .in('-page', '+0+1159')
+                .in(_bottom)
+                .in('-page', '+55+382')
+                .in(_star)
+                .in('-page', '+252+550')
+                .in(_gw)
+                .in('-page', '+386+550')
+                .in(_sw)
+                .in('-page', '+62+880')
+                .in(_white)
+                .in('-page', '+93+905')
+                .in(_headPath)
+                .fontSize(30)
+                .fill('#ffffff')
+                .font(_font)
+                .drawText(331, 537, '言值分')
+                .fontSize(34)
+                .drawText(190, 805, `恭喜您，超过${info.blog.percent || 30}%朗读者`)
+                .fill('#999999')
+                .fontSize(28)
+                .drawText(86, 1050, '连续打卡')
+                .drawText(441, 1050, '累计打卡')
+                .fill('#000000')
+                .drawText(238, 1050, `${info.continuDays}天`)
+                .drawText(593, 1050, `${info.continuDays}次`)
+                .drawText(168, 940, `${filteremoji(info.blog.nickName)}`)
+                .mosaic()
+                .write(_path, err => {
+                    if (err) {
+                        return res.error('save blogImage fail');
+                    }
+                    res.success(`${host}/static/wechat/images2/${_name}`);
+                });
+        }
     },
     /**
      * 删除微博
@@ -191,13 +192,21 @@ function filteremoji (emojireg) {
 }
 
 function saveHead (_head, _headPath) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         if (!fs.existsSync(_headPath)) {
-            gm(_head).resize(50, 50, '!').write(_headPath, err => {
-                if (err) {
-                    reject(err);
-                }
-                resolve(_headPath);
+            const writeStream = fs.createWriteStream(_headPath, {autoClose: true});
+            const readStream = request(_head);
+            readStream.pipe(writeStream);
+            readStream.on('end', response => {
+                writeStream.end();
+            });
+            writeStream.on('finish', () => {
+                gm(_headPath).resize(50, 50, '!').write(_headPath, err => {
+                    if (err) {
+                        reject(err);
+                    }
+                    resolve(_headPath);
+                });
             });
         } else {
             resolve(_headPath);

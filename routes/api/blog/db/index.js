@@ -210,7 +210,7 @@ const Helper = {
         });
         _score += parseInt(Math.random() * 5);
         sql = 'update blog set score = ? where id = ?';
-        sql = mysql.format(sql, [(blogTime < 30) ? 70 : _score, blogId]);
+        sql = mysql.format(sql, [(blogTime < 20) ? 70 : _score, blogId]);
         result = await mydb.dataCenter(sql).catch(e => false);
         return result;
     }
