@@ -104,7 +104,7 @@ const Helper = {
     },
     async getBlogById (id, userId) {
         let sql = `select 
-        b.id,b.userId,nickName,avatarUrl,banner,b.audioId,
+        b.id,b.userId,nickName,avatarUrl,banner,b.audioId,score,
         (select count(1) from follow where userId =  ? and toUserId = b.userId ) as isFollow,
         title,author,audioAuthor,content,banner,
         b.url,b.time,
@@ -121,6 +121,29 @@ const Helper = {
         and b.id = ?`;
         sql = mysql.format(sql, [userId, userId, userId, id]);
         const result = await mydb.dataCenter(sql).catch(e => [null]);
+
+        if (result[0]) {
+            sql = `select ranking from (
+                select id,status,score,(@rowno:=@rowno+1) as ranking from blog ,
+                (select (@rowno :=0) ) b where status = 1 order by score desc ) as v
+               where id = ?`;
+            sql = mysql.format(sql, [id]);
+            const rank = await mydb.dataCenter(sql).catch(e => null);
+            if (rank) {
+                sql = 'select count(1) as count from blog where status = 1';
+                const ret = await mydb.dataCenter(sql).catch(e => [{count: 0}]);
+                result[0].count = ret[0].count;
+                result[0].rank = rank[0].ranking;
+
+                if (result[0].rank === 1) {
+                    result[0].percent = 99;
+                } else if (result[0].count === result[0].rank) {
+                    result[0].percent = 1;
+                } else {
+                    result[0].percent = parseInt((1 - result[0].rank / result[0].count) * 100);
+                }
+            }
+        }
         return result[0];
     },
     /**
@@ -164,6 +187,31 @@ const Helper = {
         let sql = 'update blog set status = 0 where id = ?';
         sql = mysql.format(sql, [id]);
         const result = await mydb.dataCenter(sql).catch(e => false);
+        return result;
+    },
+    /**
+     * 打言值分
+     */
+    async score (userId, blogId, blogTime) {
+        let sql = `
+        select 
+        (select count(1)  from record where userId = ?) as num1,
+        (select days from user where id = ?) as num2,
+        (select count(1) from thumb as t left join blog as b on t.blogId = b.id where b.userId = ?) as num3,
+        (select count(1) from comment where toUserId = ?) as num4,
+        (select count(1) from comment where userId = ?) as num5
+        `;
+        sql = mysql.format(sql, [userId, userId, userId, userId, userId]);
+        let result = await mydb.dataCenter(sql).catch(e => [{num1: 0, num2: 0, num3: 0, num4: 0, num5: 0}]);
+        result = result[0];
+        let _score = 70;
+        Object.keys(result).forEach(key => {
+            _score += result[key] > 5 ? 5 : parseInt(result[key]);
+        });
+        _score += parseInt(Math.random() * 5);
+        sql = 'update blog set score = ? where id = ?';
+        sql = mysql.format(sql, [(blogTime && blogTime < 30) ? 70 : _score, blogId]);
+        result = await mydb.dataCenter(sql).catch(e => false);
         return result;
     }
 };

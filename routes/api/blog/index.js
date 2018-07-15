@@ -45,6 +45,9 @@ router.post('/uploadFile', auth.checkSession, upload.single('file'), server.uplo
 // 保存blog
 router.post('/save', auth.checkSession, server.save);
 
+// 保存图片
+router.post('/saveImage', auth.checkSession, server.saveImage);
+
 // 删除blog
 router.post('/delete', auth.checkSession, server.delete);
 
