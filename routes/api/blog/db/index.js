@@ -104,7 +104,7 @@ const Helper = {
     },
     async getBlogById (id, userId) {
         let sql = `select 
-        b.id,b.userId,nickName,avatarUrl,banner,b.audioId,score,
+        b.id,b.userId,nickName,avatarUrl,banner,b.audioId,score,b.type,
         (select count(1) from follow where userId =  ? and toUserId = b.userId ) as isFollow,
         title,author,audioAuthor,content,banner,
         b.url,b.time,
@@ -192,7 +192,7 @@ const Helper = {
     /**
      * 打言值分
      */
-    async score (userId, blogId, blogTime) {
+    async score (userId, blogId, blogTime, blogType) {
         let sql = `
         select 
         (select count(1)  from record where userId = ?) as num1,
@@ -210,7 +210,12 @@ const Helper = {
         });
         _score += parseInt(Math.random() * 5);
         sql = 'update blog set score = ? where id = ?';
-        sql = mysql.format(sql, [(blogTime < 20) ? 70 : _score, blogId]);
+        if (blogTime < 15 && (blogType === 2 || blogType === 4)) {
+            _score = 70;
+        } else if (blogTime < 30 && !(blogType === 2 || blogType === 4)) {
+            _score = 70;
+        }
+        sql = mysql.format(sql, [_score, blogId]);
         result = await mydb.dataCenter(sql).catch(e => false);
         return result;
     }

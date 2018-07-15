@@ -14,7 +14,8 @@ const Service = {
     async list (req, res, next) {
         const userId = req.id;
         const lastId = ~~req.query.lastId;
-        const ret = await db.getBlogList('status', 1, userId, lastId, 30);
+        const size = ~~req.query.size;
+        const ret = await db.getBlogList('status', 1, userId, lastId, size || 30);
         res.success({
             list: ret.list,
             count: ret.count
@@ -27,7 +28,8 @@ const Service = {
         const userId = req.id;
         const searchUserId = ~~req.query.id;
         const lastId = ~~req.query.lastId;
-        const ret = await db.getBlogList('userId', searchUserId, userId, lastId, 30);
+        const size = ~~req.query.size;
+        const ret = await db.getBlogList('userId', searchUserId, userId, lastId, size || 30);
         res.success({
             list: ret.list,
             count: ret.count
@@ -39,7 +41,8 @@ const Service = {
     async getCollectionBlogList (req, res, next) {
         const userId = req.id;
         const lastId = ~~req.query.lastId;
-        const ret = await db.getCollectionBlogList(userId, lastId, 30);
+        const size = ~~req.query.size;
+        const ret = await db.getCollectionBlogList(userId, lastId, size || 30);
         res.success({
             list: ret.list,
             count: ret.count
@@ -77,7 +80,7 @@ const Service = {
         const userId = req.id;
         const data = await db.getBlogById(id, userId);
         if (data && data.id && data.score === 0) {
-            await db.score(data.userId, data.id, data.time);
+            await db.score(data.userId, data.id, data.time, data.type);
         }
         res.success(data);
     },
@@ -99,7 +102,7 @@ const Service = {
         const blog = _.assign({userId: +req.id}, req.body);
         const id = await db.addBlog(blog);
         if (id) {
-            await db.score(+req.id, id, blog.time);
+            await db.score(+req.id, id, blog.time, blog.type);
             return res.success({id});
         }
 
