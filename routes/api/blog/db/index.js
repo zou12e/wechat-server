@@ -210,7 +210,7 @@ const Helper = {
         });
         _score += parseInt(Math.random() * 5);
         sql = 'update blog set score = ? where id = ?';
-        if (blogTime < 15 && (blogType === 2 || blogType === 4)) {
+        if (blogTime < 10 && (blogType === 2 || blogType === 4)) {
             _score = 70;
         } else if (blogTime < 30 && !(blogType === 2 || blogType === 4)) {
             _score = 70;
