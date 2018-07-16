@@ -21,7 +21,7 @@ const Helper = {
      * 累计打卡排名
      */
     async getAllPunchRanking (userId) {
-        let sql = ` select u.id as userId, nickName,avatarUrl,
+        const sql = ` select u.id as userId, nickName,avatarUrl,
         (select count(1) from record as r where r.userId = u.id) days
         from user as u
         where u.nickName is not null
@@ -29,14 +29,30 @@ const Helper = {
         limit 0, 50`;
         const list = await mydb.dataCenter(sql).catch(e => []);
 
-        sql = `select v.* from (
-            select id as userId, nickName,avatarUrl,(select count(1) from record as r where r.userId = id)  as days,(@rowno:=@rowno+1) as ranking from user,
-            (select (@rowno :=0) ) b order by days desc ) as v
-            where v.userId = ?`;
-        sql = mysql.format(sql, [userId]);
-        const mine = await mydb.dataCenter(sql).catch(e => [{}]);
+        // sql = `select v.* from (
+        //     select id as userId, nickName,avatarUrl,(select count(1) from record as r where r.userId = u.id)  as days,(@rowno:=@rowno+1) as ranking from user as u,
+        //     (select (@rowno :=0) ) b order by days desc ) as v
+        //     where v.userId = ?`;
+        // sql = mysql.format(sql, [userId]);
+
+        // const mine = await mydb.dataCenter(sql).catch(e => [{}]);
+        let mine = {
+            userId: userId,
+            ranking: -1
+        };
+        list.forEach((item, i) => {
+            if (userId === item.userId) {
+                mine = {
+                    avatarUrl: item.avatarUrl,
+                    days: item.days,
+                    nickName: item.nickName,
+                    ranking: i + 1,
+                    userId: item.userId
+                };
+            }
+        });
         return {
-            mine: mine[0],
+            mine,
             list: Helper.getRanking(list)
         };
     },
