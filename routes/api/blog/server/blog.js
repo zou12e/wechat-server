@@ -161,7 +161,7 @@ const Service = {
                 .drawText(441, 1050, '累计打卡')
                 .fill('#000000')
                 .drawText(238, 1050, `${info.continuDays}天`)
-                .drawText(593, 1050, `${info.continuDays}次`)
+                .drawText(593, 1050, `${info.punchDays}次`)
                 .drawText(168, 940, `${filteremoji(info.blog.nickName)}`)
                 .mosaic()
                 .write(_path, err => {
