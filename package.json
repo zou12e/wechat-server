@@ -49,6 +49,7 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "install": "^0.12.1",
+    "node-xlsx": "^0.12.1",
     "nodemon": "^1.14.11",
     "npm": "^6.2.0",
     "read_xlsx": "^0.0.4"
