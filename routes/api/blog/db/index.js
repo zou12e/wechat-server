@@ -142,6 +142,23 @@ const Helper = {
                 } else {
                     result[0].percent = parseInt((1 - result[0].rank / result[0].count) * 100);
                 }
+                // 最少超过70%
+                if (result[0].percent < 70) {
+                    result[0].percent = 70;
+                }
+            }
+            if (result[0].score >= 95) {
+                result[0].text = '厉害！你的声音无可挑剔！';
+            } else if (result[0].score >= 90) {
+                result[0].text = '厉害，你已接近专业播音员水准！';
+            } else if (result[0].score >= 86) {
+                result[0].text = '哇塞！你的声音像果冻一样Q弹，听了好舒服！';
+            } else if (result[0].score >= 83) {
+                result[0].text = '你的普通话很标准';
+            } else if (result[0].score >= 80) {
+                result[0].text = '你的声音很有感染力，继续保持';
+            } else {
+                result[0].text = '您的声音有温度，有亲和力，继续加油';
             }
         }
         return result[0];
@@ -204,11 +221,12 @@ const Helper = {
         sql = mysql.format(sql, [userId, userId, userId, userId, userId]);
         let result = await mydb.dataCenter(sql).catch(e => [{num1: 0, num2: 0, num3: 0, num4: 0, num5: 0}]);
         result = result[0];
-        let _score = 70;
+        let _score = 78;
         Object.keys(result).forEach(key => {
             _score += result[key] > 5 ? 5 : parseInt(result[key]);
         });
         _score += parseInt(Math.random() * 5);
+        _score = _score > 100 ? 99 : _score;
         sql = 'update blog set score = ? where id = ?';
         if (blogTime < 10 && (blogType === 2 || blogType === 4)) {
             _score = 70;

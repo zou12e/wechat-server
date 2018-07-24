@@ -17,7 +17,7 @@ router.post('/update', auth.checkSession, user.update);
 // 获取user信息
 router.get('/getUserById', auth.checkSession, user.getUserById);
 
-// 我的信息（关注，收藏，评论）
+// 我的信息（关注，收藏，评论, 点赞， 言值分）
 router.get('/getInfo', auth.checkSession, user.getInfo);
 
 // 我的打卡记录
