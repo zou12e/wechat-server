@@ -154,7 +154,7 @@ const Service = {
                 .font(_font)
                 .drawText(106, 420, '经过“趣朗读”人工智能测评，你的言值分')
                 .fontSize(30)
-                .drawText((750 - (750 / 25) * info.blog.text.length) / 2, 810, `${info.blog.text}`)
+                .drawText(parseInt((750 - (750 / 25) * info.blog.text.length) / 2), 810, `${info.blog.text}`)
                 .fill('#999999')
                 .fontSize(28)
                 .drawText(86, 1026, '连续打卡')
