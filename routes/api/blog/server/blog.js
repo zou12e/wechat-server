@@ -134,6 +134,7 @@ const Service = {
             return res.error('save blogImage fail');
         });
         if (result) {
+            info.blog.text = repalceB(info.blog.text);
             gm()
                 .in('-page', '+0+0')
                 .in(_bg)
@@ -186,7 +187,9 @@ const Service = {
         res.error('delete blog fail');
     }
 };
-
+function repalceB (str) {
+    return str.replace('\b', '');
+}
 function filteremoji (emojireg) {
     const ranges = [
         '\ud83c[\udf00-\udfff]',
