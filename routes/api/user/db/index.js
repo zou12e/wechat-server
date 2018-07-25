@@ -89,7 +89,7 @@ const Helper = {
         (select count(1) from collection as c left join blog as b on c.blogId = b.id where b.status = 1 and c.userId = ? ) as collections,
         (select count(1) from comment as c left join blog as b on c.blogId = b.id where c.toUserId = ? and c.status = 1 and b.status = 1 ) as comments,
         (select days from user where id = ? ) as continuDays,
-        (select count(1) from thumb where userId = ? ) as thumbs,
+        (select count(1) from thumb as t left join blog as b on t.blogId = b.id where b.userId = ? and b.status = 1) as thumbs,
         (select score from blog where userId = ? order by createTime desc limit 0,1  ) as score,
         (select count(1) from record where userId = ? ) as punchDays`;
         sql = mysql.format(sql, [userId, userId, userId, userId, userId, userId, userId]);
