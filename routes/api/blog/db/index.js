@@ -225,8 +225,8 @@ const Helper = {
         Object.keys(result).forEach(key => {
             _score += result[key] > 5 ? 5 : parseInt(result[key]);
         });
-        _score += parseInt(Math.random() * 5);
-        _score = _score > 100 ? 99 : _score;
+        // _score += parseInt(Math.random() * 5);
+        _score = _score >= 100 ? 99 : _score;
         sql = 'update blog set score = ? where id = ?';
         if (blogTime < 10 && (blogType === 2 || blogType === 4)) {
             _score = 70;
