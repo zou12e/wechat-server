@@ -3,6 +3,7 @@ const db = require('../db');
 const moment = require('moment');
 const config = require('config');
 const beginDate = config.get('beginDate');
+const logger = require('../../../../middleware/logger');
 const Service = {
     async follow (req, res, next) {
         const userId = req.id;
@@ -48,6 +49,13 @@ const Service = {
         const userId = req.id;
         const list = await db.getRecordInfo(userId);
         res.success({list});
+    },
+    async err (req, res, next) {
+        logger.error({
+            id: req.id,
+            err: req.body.err
+        });
+        res.success('ok');
     }
 };
 module.exports = Service;

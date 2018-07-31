@@ -26,4 +26,7 @@ router.get('/getPunchInfo', auth.checkSession, user.getPunchInfo);
 // 关注列表
 router.get('/getFollow', auth.checkSession, user.getFollow);
 
+// 错误日志
+router.post('/err', auth.checkSession, user.err);
+
 module.exports = router;
