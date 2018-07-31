@@ -33,7 +33,7 @@ const Helper = {
      * 获取推荐语音
      */
     async getRecommends () {
-        const sql = 'select audioId from recommend order by sort;';
+        const sql = 'select audioId as id from recommend order by sort;';
         const result = await mydb.dataCenter(sql).catch(e => []);
         return result;
     },
