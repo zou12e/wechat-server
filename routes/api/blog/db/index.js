@@ -215,17 +215,16 @@ const Helper = {
         (select count(1)  from record where userId = ?) as num1,
         (select days from user where id = ?) as num2,
         (select count(1) from thumb as t left join blog as b on t.blogId = b.id where b.userId = ?) as num3,
-        (select count(1) from comment where toUserId = ?) as num4,
-        (select count(1) from comment where userId = ?) as num5
+        (select count(1) from comment where toUserId = ?) as num4
         `;
         sql = mysql.format(sql, [userId, userId, userId, userId, userId]);
         let result = await mydb.dataCenter(sql).catch(e => [{num1: 0, num2: 0, num3: 0, num4: 0, num5: 0}]);
         result = result[0];
-        let _score = 78;
+        let _score = 75;
         Object.keys(result).forEach(key => {
             _score += result[key] > 5 ? 5 : parseInt(result[key]);
         });
-        // _score += parseInt(Math.random() * 5);
+        _score += parseInt(Math.random() * 5);
         _score = _score >= 100 ? 99 : _score;
         sql = 'update blog set score = ? where id = ?';
         if (blogTime < 10 && (blogType === 2 || blogType === 4)) {
