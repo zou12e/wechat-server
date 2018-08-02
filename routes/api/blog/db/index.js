@@ -229,7 +229,7 @@ const Helper = {
         sql = 'update blog set score = ? where id = ?';
         if (blogTime < 10 && (blogType === 2 || blogType === 4)) {
             _score = 70;
-        } else if (blogTime < 30 && !(blogType === 2 || blogType === 4)) {
+        } else if (blogTime < 20 && !(blogType === 2 || blogType === 4)) {
             _score = 70;
         }
         sql = mysql.format(sql, [_score, blogId]);
