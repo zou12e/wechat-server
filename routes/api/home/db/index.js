@@ -62,7 +62,7 @@ const Helper = {
         let id = 0;
         const ids = await Helper.getRecommends();
         if (ids && ids.length) {
-            let sql = 'delete from recommend where id = ?;';
+            let sql = 'delete from recommend where audioId = ?;';
             sql = mysql.format(sql, ids[0].id);
             await mydb.dataCenter(sql).catch(e => false);
         }
