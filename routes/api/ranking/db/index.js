@@ -1,6 +1,6 @@
 const mydb = require('../../../../db/mysql');
 const mysql = require('mysql');
-
+const _ = require('lodash');
 const Helper = {
     /**
      * 查询点赞排行榜
@@ -21,36 +21,28 @@ const Helper = {
      * 累计打卡排名
      */
     async getAllPunchRanking (userId) {
-        const sql = ` select u.id as userId, nickName,avatarUrl,
-        (select count(1) from record as r where r.userId = u.id) days
-        from user as u
-        where u.nickName is not null
-        order by days desc
-        limit 0, 50`;
-        const list = await mydb.dataCenter(sql).catch(e => []);
+        const sql = `select  r.userId, u.nickName, u.avatarUrl, count(1) as days from record as r
+        left join user as u on r.userId = u.id 
+        group by userId  order by days desc;`;
+        let list = await mydb.dataCenter(sql).catch(e => []);
 
-        // sql = `select v.* from (
-        //     select id as userId, nickName,avatarUrl,(select count(1) from record as r where r.userId = u.id)  as days,(@rowno:=@rowno+1) as ranking from user as u,
-        //     (select (@rowno :=0) ) b order by days desc ) as v
-        //     where v.userId = ?`;
-        // sql = mysql.format(sql, [userId]);
-
-        // const mine = await mydb.dataCenter(sql).catch(e => [{}]);
         let mine = {
             userId: userId,
             ranking: -1
         };
-        list.forEach((item, i) => {
-            if (userId === item.userId) {
-                mine = {
-                    avatarUrl: item.avatarUrl,
-                    days: item.days,
-                    nickName: item.nickName,
-                    ranking: i + 1,
-                    userId: item.userId
-                };
-            }
-        });
+
+        const index = _.findIndex(list, {userId: userId});
+        if (index !== -1) {
+            const item = list[index];
+            mine = {
+                avatarUrl: item.avatarUrl,
+                days: item.days,
+                nickName: item.nickName,
+                ranking: index + 1,
+                userId: item.userId
+            };
+        }
+        list = list.splice(0, 50); // 取前50名
         return {
             mine,
             list: Helper.getRanking(list)
