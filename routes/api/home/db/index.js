@@ -1,6 +1,7 @@
 const mydb = require('../../../../db/mysql');
 const mysql = require('mysql');
 const cache = require('memory-cache');
+const beginPunch = require('config').get('beginPunch');
 
 const Helper = {
     /**
@@ -65,6 +66,8 @@ const Helper = {
             let sql = 'delete from recommend where audioId = ?;';
             sql = mysql.format(sql, ids[0].id);
             await mydb.dataCenter(sql).catch(e => false);
+
+            // beginPunch
         }
         if (ids.length > 1) {
             id = ids[1].id;

@@ -42,7 +42,7 @@ const Service = {
     },
     async getInfo (req, res, next) {
         const data = await db.getCountInfo(req.id);
-        data.allDays = moment().diff(moment(beginDate), 'days');
+        data.allDays = moment().diff(moment(data.createTime), 'days');
         res.success(data);
     },
     async getPunchInfo (req, res, next) {
