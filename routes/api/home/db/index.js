@@ -2,6 +2,7 @@ const mydb = require('../../../../db/mysql');
 const mysql = require('mysql');
 const cache = require('memory-cache');
 const beginPunch = require('config').get('beginPunch');
+const moment = require('moment');
 
 const Helper = {
     /**
@@ -61,16 +62,28 @@ const Helper = {
     },
     async changeRecommend () {
         let id = 0;
+        let sql = '';
         const ids = await Helper.getRecommends();
+        const punchDay = moment().diff(moment(beginPunch), 'days') + 1;
         if (ids && ids.length) {
-            let sql = 'delete from recommend where audioId = ?;';
+            sql = 'delete from recommend where audioId = ?;';
             sql = mysql.format(sql, ids[0].id);
             await mydb.dataCenter(sql).catch(e => false);
 
-            // beginPunch
+            sql = `update audio set banner = 'https://audio.wisdomwords.cn/images/?.jpg' where id = ?;`;
+            sql = mysql.format(sql, [ids[0].id, ids[0].id]);
+            await mydb.dataCenter(sql).catch(e => false);
         }
         if (ids.length > 1) {
             id = ids[1].id;
+
+            // 第一期打卡图片
+            if (punchDay <= 14) {
+                sql = `update audio set banner = 'https://audio.wisdomwords.cn/images/dk1/?.jpg', status = 1 where id = ?;`;
+                sql = mysql.format(sql, [punchDay, id]);
+                await mydb.dataCenter(sql).catch(e => false);
+            }
+
             const data = await Helper.getAudioInfoById(id);
             if (data) {
                 cache.put('Recommend', JSON.stringify(data));

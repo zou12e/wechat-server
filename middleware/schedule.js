@@ -15,4 +15,6 @@ module.exports = async function () {
         logger.infos('begin changeRecommendId');
         await homeDb.changeRecommend();
     });
+
+    await homeDb.changeRecommend();
 };
