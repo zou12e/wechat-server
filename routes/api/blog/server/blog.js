@@ -7,6 +7,10 @@ const gm = require('gm').subClass({imageMagick: true});
 const db = require('../db');
 const host = config.get('host');
 const saveFolder = '/opt/www/static/wechat/images2';
+const qiniu = require('qiniu');
+const accessKey = 'iyoo6yHtN_euHKaHBpRjlcnC8flcQxGzQhFV8keM';
+const secretKey = 'oS3oX6SXINTp-Nw_Vqq56ZemcN0yUmF9PZG8c36m';
+
 const Service = {
     /**
      * 查询发现， 所有微博
@@ -185,6 +189,18 @@ const Service = {
             return res.success({});
         }
         res.error('delete blog fail');
+    },
+    /**
+     * 获取token凭证
+     */
+    async getUploadToken (req, res, next) {
+        const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
+        const options = {
+            scope: 'wechat/audio2'
+        };
+        const putPolicy = new qiniu.rs.PutPolicy(options);
+        const uploadToken = putPolicy.uploadToken(mac);
+        return res.success(uploadToken);
     }
 };
 function repalceB (str) {

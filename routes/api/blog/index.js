@@ -39,6 +39,9 @@ router.post('/thumb', auth.checkSession, server.thumb);
 // 收藏or取消收藏
 router.post('/collection', auth.checkSession, server.collection);
 
+// 获取token凭证
+router.get('/getUploadToken', auth.checkSession, server.getUploadToken);
+
 // 上传文件
 router.post('/uploadFile', auth.checkSession, upload.single('file'), server.uploadFile);
 
