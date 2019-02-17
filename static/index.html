@@ -43,8 +43,12 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
 <script>
     $(document).ready(function(){
-       
+        var isClick = false;
         $('button').on('click', function(){
+            if (isClick)
+                return;
+            
+            isClick = true;
             $.ajax({
                 type: 'POST',
                 url: '/api/v1/image/saveImage',
@@ -58,6 +62,9 @@
                     ret.data.forEach(item => {
                         $('#imgBox').append(`<a href='${item}' target='_blank' ><img src='${item}' /></a>`);
                     });
+                    setTimeout(()=> {
+                        isClick = false;
+                    }, 1000)
                 },
                 contentType: "application/json"
             });
