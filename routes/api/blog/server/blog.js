@@ -15,7 +15,7 @@ const Service = {
         const text = req.body.text;
         const author = req.body.author;
         let size = Number(req.body.size);
-        if (isNaN(size)) size = 1;
+        if (isNaN(size) || size === 0) size = 1;
         if (size > 31) size = 31;
         let _size = 0;
         const data = [];
