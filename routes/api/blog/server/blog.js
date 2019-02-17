@@ -14,13 +14,14 @@ const Service = {
     async saveImage (req, res, next) {
         const text = req.body.text;
         const author = req.body.author;
+        const myday = req.body.day;
         let size = Number(req.body.size);
         if (isNaN(size) || size === 0) size = 1;
         if (size > 31) size = 31;
         let _size = 0;
         const data = [];
         for (let _i = 0; _i < size; _i++) {
-            const _day = moment().add(_i, 'days');
+            const _day = myday ? moment(myday).add(_i, 'days') : moment().add(_i, 'days');
             const day = _day.format('DD');
             const monthDay = _day.format('MMMDo');
             const week = _day.format('dddd');

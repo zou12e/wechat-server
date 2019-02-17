@@ -32,6 +32,8 @@
     <hr>
     <input id='size'  placeholder="张数"  >
     <hr>
+    <input type="date" id='day' placeholder="日期"  >
+    <hr>
     <button >生成海报</button>
     <hr>
     <div id='imgBox'>
@@ -49,6 +51,7 @@
                 data: JSON.stringify({
                     text:$('#text').val(),
                     size:$('#size').val(),
+                    day:$('#day').val(),
                     author:$('#author').val(),
                 }),
                 success: function(ret) {
