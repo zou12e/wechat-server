@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Statis</title>
+    <style>
+        textarea, input, button{
+            width: 300px;
+            height: 100px;
+            resize: none;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        input, button {
+            height: 30px;
+        }
+        div  img {
+            width: 75px;
+            height: 133px;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+</body>
+    
+    <textarea id='text' placeholder="内容" ></textarea>
+    <hr>
+    <input id='author'  placeholder="作者"  >
+    <hr>
+    <input id='size'  placeholder="张数"  >
+    <hr>
+    <button >生成海报</button>
+    <hr>
+    <div id='imgBox'>
+
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
+<script>
+    $(document).ready(function(){
+       
+        $('button').on('click', function(){
+            $.ajax({
+                type: 'POST',
+                url: '/api/v1/image/saveImage',
+                data: JSON.stringify({
+                    text:$('#text').val(),
+                    size:$('#size').val(),
+                    author:$('#author').val(),
+                }),
+                success: function(ret) {
+                    ret.data.forEach(item => {
+                        $('#imgBox').append(`<a href='${item}' target='_blank' ><img src='${item}' /></a>`);
+                    });
+                },
+                contentType: "application/json"
+            });
+        })
+    })
+</script>
+</html>
