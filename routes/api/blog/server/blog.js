@@ -1,241 +1,108 @@
 const config = require('config');
 const path = require('path');
-const fs = require('fs');
-const request = require('request');
-const _ = require('lodash');
+const solarlunar = require('solarlunar');
 const gm = require('gm').subClass({imageMagick: true});
-const db = require('../db');
 const host = config.get('host');
 const saveFolder = '/opt/www/static/wechat/images2';
-const qiniu = require('qiniu');
-const accessKey = 'iyoo6yHtN_euHKaHBpRjlcnC8flcQxGzQhFV8keM';
-const secretKey = 'oS3oX6SXINTp-Nw_Vqq56ZemcN0yUmF9PZG8c36m';
-
+const moment = require('moment');
+moment.locale('zh-cn');
+let index = 1;
 const Service = {
-    /**
-     * 查询发现， 所有微博
-     */
-    async list (req, res, next) {
-        const userId = req.id;
-        const lastId = ~~req.query.lastId;
-        const size = ~~req.query.size;
-        const ret = await db.getBlogList('status', 1, userId, lastId, size || 30);
-        res.success({
-            list: ret.list,
-            count: ret.count
-        });
-    },
-    /**
-     * 查询用户发的微博
-     */
-    async getBlogListByUserId (req, res, next) {
-        const userId = req.id;
-        const searchUserId = ~~req.query.id;
-        const lastId = ~~req.query.lastId;
-        const size = ~~req.query.size;
-        const ret = await db.getBlogList('userId', searchUserId, userId, lastId, size || 30);
-        res.success({
-            list: ret.list,
-            count: ret.count
-        });
-    },
-    /**
-     * 收藏微博
-     */
-    async getCollectionBlogList (req, res, next) {
-        const userId = req.id;
-        const lastId = ~~req.query.lastId;
-        const size = ~~req.query.size;
-        const ret = await db.getCollectionBlogList(userId, lastId, size || 30);
-        res.success({
-            list: ret.list,
-            count: ret.count
-        });
-    },
-    /**
-     * 点赞微博
-     */
-    async thumb (req, res, next) {
-        const userId = req.id;
-        const blogId = ~~req.body.id;
-        const result = await db.thumb(userId, blogId);
-        if (result) {
-            return res.success();
-        }
-        res.error('thumb blog fail');
-    },
-    /**
-     * 收藏微博
-     */
-    async collection (req, res, next) {
-        const userId = req.id;
-        const blogId = ~~req.body.id;
-        const result = await db.collection(userId, blogId);
-        if (result) {
-            return res.success();
-        }
-        res.error('collection blog fail');
-    },
-    /**
-     * 查下微博详情
-     */
-    async getBlogById (req, res, next) {
-        const id = ~~req.query.id;
-        const userId = req.id;
-        const data = await db.getBlogById(id, userId);
-        if (data && data.id && data.score === 0) {
-            await db.score(data.userId, data.id, data.time, data.type);
-        }
-        res.success(data);
-    },
-    /**
-     * 上传语音
-     */
-    async uploadFile (req, res, next) {
-        const data = {};
-        if (req.file) {
-            data.path = `${host}/static/wechat/audio2/${req.file.filename}`;
-            return res.success(data);
-        }
-        res.error(data);
-    },
-    /**
-     * 保存微博
-     */
-    async save (req, res, next) {
-        const blog = _.assign({userId: +req.id}, req.body);
-        const id = await db.addBlog(blog);
-        if (id) {
-            await db.score(+req.id, id, blog.time, blog.type);
-            return res.success({id});
-        }
-
-        res.error('add blog fail');
-    },
     /**
      * 保存言值图片
      */
     async saveImage (req, res, next) {
-        const info = req.body;
-        const _ph = path.join(__dirname, '../../../../sources');
-        const _font = `${_ph}/PingFang.ttc`;
-        const _bg = `${_ph}/icon-score-${info.random}-jpg.jpg`;
-        const _star = `${_ph}/icon-score-star${info.star}.png`;
-        const _bottom = `${_ph}/icon-score-bottom.png`;
-        const _gw = `${_ph}/icon-score-${parseInt(info.blog.score / 10)}.png`;
-        const _sw = `${_ph}/icon-score-${info.blog.score % 10}.png`;
-        const _white = `${_ph}/icon-score-white.png`;
-        const _head = info.blog.avatarUrl;
-        const _headPath = `${saveFolder}/heads/${info.blog.userId}.jpg`;
-        const _name = `${Date.now()}.jpg`;
-        const _path = `${saveFolder}/${_name}`;
+        const text = req.body.text;
+        const author = req.body.author;
+        let size = Number(req.body.size);
+        if (isNaN(size)) size = 1;
+        if (size > 31) size = 31;
+        let _size = 0;
+        const data = [];
+        for (let _i = 0; _i < size; _i++) {
+            const _day = moment().add(_i, 'days');
+            const day = _day.format('DD');
+            const monthDay = _day.format('MMMDo');
+            const week = _day.format('dddd');
+            const lunar = '农历';
+            const solar2lunarData = solarlunar.solar2lunar(_day.get('year'), _day.get('month') + 1, day);
+            const lunarDay = solar2lunarData.monthCn + solar2lunarData.dayCn;
 
-        /**
-         * 不存在头像先保存头像
-         */
-        const result = await saveHead(_head, _headPath).catch(err => {
-            console.log(err);
-            return res.error('save blogImage fail');
-        });
-        if (result) {
-            info.blog.text = repalceB(info.blog.text);
-            gm()
+            const _ph = path.join(__dirname, '../../../../sources');
+            const _font = `${_ph}/simsun.ttf`;
+            const _bg = `${_ph}/bg${index}.png`;
+            const _ewm = `${_ph}/ewm.png`;
+            const _folder = `${_ph}/folder.png`;
+            const _logo = `${_ph}/logo.png`;
+            const _frame = `${_ph}/frame1.png`;
+            const _name = `${Date.now()}-${_i}.jpg`;
+            const _path = `${saveFolder}/${_name}`;
+            const _gm = gm()
                 .in('-page', '+0+0')
                 .in(_bg)
-                .in('-page', '+0+1159')
-                .in(_bottom)
-                .in('-page', '+188+688')
-                .in(_star)
-                .in('-page', '+252+448')
-                .in(_gw)
-                .in('-page', '+386+448')
-                .in(_sw)
-                .in('-page', '+62+880')
-                .in(_white)
-                .in('-page', '+93+905')
-                .in(_headPath)
-                .fontSize(30)
+                .in('-page', '+302+1065')
+                .in(_ewm)
+                .in('-page', '+254+1246')
+                .in(_logo)
+                .in('-page', '+42+101')
+                .in(_frame)
                 .fill('#ffffff')
                 .font(_font)
-                .drawText(106, 420, '经过“趣朗读”人工智能测评，你的言值分')
-                .fontSize(30)
-                .drawText(parseInt((750 - (750 / 25) * info.blog.text.length) / 2), 810, `${info.blog.text}`)
-                .fill('#999999')
-                .fontSize(28)
-                .drawText(86, 1026, '连续打卡')
-                .drawText(284, 1026, '累计打卡')
-                .drawText(486, 1026, '言值超过全国')
-                .fill('#000000')
-                .drawText(101, 1086, `${info.continuDays}天`)
-                .drawText(317, 1086, `${info.punchDays}次`)
-                .drawText(530, 1086, `${info.blog.percent || 70}%人`)
-                .drawText(164, 940, `${filteremoji(info.blog.nickName)}`)
-                .mosaic()
+                .fontSize(142);
+            const _largeLeft = 65;
+            const _largeTop = 120;
+            _gm.drawText(_largeLeft, _largeTop, day.charAt(0), 'NorthWest');
+            _gm.drawText(_largeLeft + 64 + 8, _largeTop, day.charAt(1), 'NorthWest');
+
+            const _littleLeft = 215;
+            const _littleTop = 135;
+            _gm.fontSize(22);
+            _gm.drawText(_littleLeft, _littleTop, monthDay, 'NorthWest');       
+            _gm.drawText(_littleLeft, _littleTop + 30 * 1, week, 'NorthWest');
+            _gm.drawText(_littleLeft, _littleTop + 30 * 2, lunar, 'NorthWest');
+            _gm.drawText(_littleLeft, _littleTop + 30 * 3, lunarDay, 'NorthWest');
+
+            const _textLeft = 89;
+            const _textTop = 482;
+            const _w = 36;
+            const _h = 64;
+            let w = 0;
+            let h = 0;
+            _gm.fontSize(31);
+            for (const t of text) {
+                if (_textLeft + w > 593) {
+                    w = 0;
+                    h += _h;
+                }
+                _gm.drawText(_textLeft + w, _textTop + h, t, 'NorthWest');
+                w += _w;
+            }
+            h += _h;
+            w = (14 - author.length) * _w;
+            _gm.in('-page', `+${_textLeft + w - 1.5 * _w}+${_textTop + h + 13}`);
+            _gm.in(_folder);
+            for (const a of author) {
+                w += _w;
+                _gm.drawText(_textLeft + w, _textTop + h, a, 'NorthWest');
+            }
+
+            _gm.mosaic()
                 .write(_path, err => {
                     if (err) {
+                        console.log(err);
                         return res.error('save blogImage fail');
                     }
-                    res.success(`${host}/static/wechat/images2/${_name}`);
+                    data.push(`${host}/static/wechat/images2/${_name}`);
+                    if (++_size === size) {
+                        res.success(data.sort());
+                    }
                 });
+            if (++index > 3) {
+                index = 1;
+            }
         }
-    },
-    /**
-     * 删除微博
-     */
-    async delete (req, res, next) {
-        const id = ~~req.body.id;
-        const data = await db.deleteBlog(id);
-        if (data) {
-            return res.success({});
-        }
-        res.error('delete blog fail');
-    },
-    /**
-     * 获取token凭证
-     */
-    async getUploadToken (req, res, next) {
-        const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
-        const options = {
-            scope: 'wechat/audio2'
-        };
-        const putPolicy = new qiniu.rs.PutPolicy(options);
-        const uploadToken = putPolicy.uploadToken(mac);
-        return res.success(uploadToken);
+        
     }
 };
-function repalceB (str) {
-    return str.replace('\b', '');
-}
-function filteremoji (emojireg) {
-    const ranges = [
-        '\ud83c[\udf00-\udfff]',
-        '\ud83d[\udc00-\ude4f]',
-        '\ud83d[\ude80-\udeff]'
-    ];
-    return emojireg.replace(new RegExp(ranges.join('|'), 'g'), '');
-}
-
-function saveHead (_head, _headPath) {
-    return new Promise(async (resolve, reject) => {
-        if (!fs.existsSync(_headPath)) {
-            const writeStream = fs.createWriteStream(_headPath, {autoClose: true});
-            const readStream = request(_head);
-            readStream.pipe(writeStream);
-            readStream.on('end', response => {
-                writeStream.end();
-            });
-            writeStream.on('finish', () => {
-                gm(_headPath).resize(50, 50, '!').write(_headPath, err => {
-                    if (err) {
-                        reject(err);
-                    }
-                    resolve(_headPath);
-                });
-            });
-        } else {
-            resolve(_headPath);
-        }
-    });
-}
 
 module.exports = Service;

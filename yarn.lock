@@ -4222,6 +4222,10 @@ socks@~2.2.0:
     ip "^1.1.5"
     smart-buffer "^4.0.1"
 
+solarlunar@^2.0.7:
+  version "2.0.7"
+  resolved "http://registry.npm.taobao.org/solarlunar/download/solarlunar-2.0.7.tgz#b323e156028fa5ffcb44d28b64ef7a2e390ccff9"
+
 sorted-array-functions@^1.0.0:
   version "1.2.0"
   resolved "http://registry.npm.taobao.org/sorted-array-functions/download/sorted-array-functions-1.2.0.tgz#43265b21d6e985b7df31621b1c11cc68d8efc7c3"

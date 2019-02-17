@@ -1,22 +1,9 @@
 {
     "env" : "dev",
-    "port" : 4001,
+    "port" : 4002,
     "host": "https://www.zourunze.com",
     "Session": {
-        "name": "wechat-server-dev",
+        "name": "node-image-dev",
         "secret": "wechat"
-    },
-    "wechat": {
-        "appid": "wx037232cadf17facf",
-        "secret": "085507699a2ddaaac855d2e5d27f9e5e"
-    },
-    "mysql": {
-        "host": "127.0.0.1",
-        "port": 3306,
-        "database": "huiyanbang",
-        "user": "hybroot",
-        "password": "123456"
-    },
-    "beginDate" : "2018-07-08 00:00:00",
-    "beginPunch" : "2018-08-01 00:00:00"
+    }
 }
