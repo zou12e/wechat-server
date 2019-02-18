@@ -21,6 +21,13 @@
             height: 133px;
             margin-right: 20px;
         }
+        input[type='file'] {
+            width: 180px;
+        }
+        #uploadImage {
+            margin-left: 20px;
+            width: 100px;
+        }
     </style>
 </head>
 <body>
@@ -34,7 +41,12 @@
     <hr>
     <input type="date" id='day' placeholder="日期"  >
     <hr>
-    <button >生成海报</button>
+    <iframe name="uploadIframe" style="display:none"></iframe>
+    <form target="uploadIframe" id= "uploadForm" action= "/api/v1/image/uploadImage" method= "post" enctype ="multipart/form-data">  
+        <input type="file" name="file" id='filename' ><button type="submit" id='uploadImage'>上传</button>  
+    </form>
+    <hr>
+    <button id='saveImage' >生成海报</button>
     <hr>
     <div id='imgBox'>
 
@@ -44,10 +56,9 @@
 <script>
     $(document).ready(function(){
         var isClick = false;
-        $('button').on('click', function(){
-            if (isClick)
-                return;
-            
+        var filename = '';
+        $('#saveImage').on('click', function(){
+            if (isClick) return;
             isClick = true;
             $.ajax({
                 type: 'POST',
@@ -56,6 +67,7 @@
                     text:$('#text').val(),
                     size:$('#size').val(),
                     day:$('#day').val(),
+                    filename,
                     author:$('#author').val(),
                 }),
                 success: function(ret) {
@@ -64,11 +76,23 @@
                     });
                     setTimeout(()=> {
                         isClick = false;
+                        filename = '';
+                        $('#filename').val('');
                     }, 1000)
                 },
                 contentType: "application/json"
             });
         })
+        
+        $('iframe').on('load', function() {
+            var responseText = $('iframe')[0].contentDocument.body.textContent;
+            var ret = JSON.parse(responseText) || {};
+            if (ret && ret.code) {
+                alert('上传成功');
+                filename = ret.data.name;
+            }
+       });
+       
     })
 </script>
 </html>

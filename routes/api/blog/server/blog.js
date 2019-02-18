@@ -3,6 +3,7 @@ const path = require('path');
 const solarlunar = require('solarlunar');
 const gm = require('gm').subClass({imageMagick: true});
 const host = config.get('host');
+const uploadFolder = '/opt/www/static/wechat/images1';
 const saveFolder = '/opt/www/static/wechat/images2';
 const moment = require('moment');
 moment.locale('zh-cn');
@@ -15,6 +16,7 @@ const Service = {
         const text = req.body.text;
         const author = req.body.author;
         const myday = req.body.day;
+        const filename = req.body.filename;
         let size = Number(req.body.size);
         if (isNaN(size) || size === 0) size = 1;
         if (size > 31) size = 31;
@@ -31,7 +33,7 @@ const Service = {
 
             const _ph = path.join(__dirname, '../../../../sources');
             const _font = `${_ph}/simsun.ttf`;
-            const _bg = `${_ph}/bg${index}.png`;
+            const _bg = filename ? `${uploadFolder}/${filename}` : `${_ph}/bg${index}.png`;
             const _ewm = `${_ph}/ewm.png`;
             const _folder = `${_ph}/folder.png`;
             const _logo = `${_ph}/logo.png`;
@@ -102,7 +104,15 @@ const Service = {
                 index = 1;
             }
         }
-        
+    },
+    async uploadFile (req, res, next) {
+        const data = {};
+        if (req.file) {
+            data.name = req.file.filename;
+            data.path = `${host}/static/wechat/images1/${req.file.filename}`;
+            return res.success(data);
+        }
+        res.error(data);
     }
 };
 
