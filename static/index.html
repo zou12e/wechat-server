@@ -43,7 +43,11 @@
     <hr>
     <iframe name="uploadIframe" style="display:none"></iframe>
     <form target="uploadIframe" id= "uploadForm" action= "/api/v1/image/uploadImage" method= "post" enctype ="multipart/form-data">  
-        <input type="file" name="file" id='filename' ><button type="submit" id='uploadImage'>上传</button>  
+        <input type="file" name="file" id='filename' >
+        <button type="submit" id='uploadImage'>上传</button>  
+        <span>
+            建议尺寸：750X1334
+        </span>
     </form>
     <hr>
     <button id='saveImage' >生成海报</button>
