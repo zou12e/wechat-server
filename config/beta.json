@@ -7,8 +7,8 @@
         "secret": "wechat"
     },
     "wechat": {
-        "appid": "wxa5c939f14afa9c43",
-        "secret": "c2b4075d35ce34d9ef7a3a4a13c184c8"
+        "appid": "wxab0ac4566e168327",
+        "secret": "65996ac7434422e665eee1ba694d0bff"
     },
     "mysql": {
         "host": "127.0.0.1",
