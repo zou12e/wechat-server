@@ -196,7 +196,7 @@ const Service = {
     async getUploadToken (req, res, next) {
         const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
         const options = {
-            scope: 'wechat/audio2'
+            scope: 'wechat/audio3'
         };
         const putPolicy = new qiniu.rs.PutPolicy(options);
         const uploadToken = putPolicy.uploadToken(mac);
