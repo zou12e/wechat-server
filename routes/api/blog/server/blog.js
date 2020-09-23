@@ -118,6 +118,7 @@ const Service = {
      */
     async saveImage (req, res, next) {
         try {
+            logger.infos(`saveImage begin`);
             const info = req.body;
             const _ph = path.join(__dirname, '../../../../sources');
             const _font = `${_ph}/PingFang.ttc`;
@@ -180,8 +181,8 @@ const Service = {
                         res.success(`${host}/static/wechat/images2/${_name}`);
                     });
             }
-        } catch (e) {
-            logger.infos(`saveImage err e:${e}`);
+        } catch (err) {
+            logger.errors(`saveImage error：${err}`);
         }
     },
     /**
