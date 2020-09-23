@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 
-const uploadFolder = '/opt/www/static/wechat/audio2';
+const uploadFolder = '/opt/www/website/static/wechat/audio2';
 
 // 通过 filename 属性定制
 const storage = multer.diskStorage({
